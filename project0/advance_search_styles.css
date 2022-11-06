@@ -1,0 +1,34 @@
+body {
+    background-color:rgba(32,33,36,1);
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+.top_div {
+    display: flex;
+    padding: 6px;
+    height: 60px;
+    align-items: center;
+}
+.top_div_left {
+    flex: 1 1 auto;
+    height: 48px;
+    vertical-align: middle;
+}
+.top_div_right {
+    flex: 0 0 auto;
+    height: 48px;
+    vertical-align: middle;
+}
+.top_div_right > a {
+    color: white;
+    text-decoration: none;
+}
+.top_div_right > a:hover {
+    text-decoration: underline;
+}
+.span_google_logo {
+    content: url(https://www.gstatic.com/images/branding/googlelogo/svg/googlelogo_light_clr_74x24px.svg);
+    opacity: 0.87;
+}
