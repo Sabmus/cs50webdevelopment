@@ -66,6 +66,9 @@ body {
     box-shadow: none;
     border-radius: 24px;
 }
+.input_search:hover {
+    background-color: #303134;
+}
 .input_search_left {
     padding: 8px 13px 0 14px;
     width: 20px;
@@ -75,7 +78,7 @@ body {
     fill: currentColor;
 }
 .actually_search_bar {
-    flex-grow: 1;
+    width: 100%;
 }
 .the_input {
     background-color: transparent;
@@ -85,6 +88,8 @@ body {
     word-wrap: break-word;
     outline: none;
     font-size: 16px;
+    width: 100%;
+    height: 34px;
 }
 
 .input_submit {
@@ -99,10 +104,9 @@ body {
     border-radius: 4px;
     color: #e8eaed;
     font-size: 14px;
-    margin: 11px 4px;
-    padding: 0 16px;
-    line-height: 27px;
+    margin: 11px 6px;
     height: 36px;
+    width: 150px;
     min-width: 54px;
     text-align: center;
     cursor: pointer;
