@@ -1,3 +1,4 @@
+# https://cs50.harvard.edu/web/2020/projects/2/commerce/#specification
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
