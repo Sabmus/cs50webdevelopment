@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from datetime import timedelta
 
 
 class User(AbstractUser):
@@ -29,8 +30,8 @@ class Currency(models.Model):
         return f"Currency: {self.name} equals to: {self.conversion_rate} {self.base_currency.name}"
 
 
-class Auction(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+class Item(models.Model):
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=64)
     description = models.TextField()
     category = models.ForeignKey(Category, on_delete=models.CASCADE, blank=True)
@@ -39,27 +40,28 @@ class Auction(models.Model):
     bid_duration = models.IntegerField()  # should be duration in days
     image = models.URLField(max_length=200, blank=True)
     created_at = models.DateTimeField(auto_now=False, auto_now_add=True)
+    last_until = models.DateTimeField(blank=True, null=True)
 
     def __str__(self) -> str:
         return f"Action #{self.id}: Item: {self.title}, staring bid: {self.starting_bid} {self.currency.name}"
 
 
 class Bid(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    auction_bidded = models.ForeignKey(Auction, on_delete=models.CASCADE)
-    bid_amount = models.IntegerField()
+    bidder = models.ForeignKey(User, on_delete=models.CASCADE)
+    item = models.ForeignKey(Item, on_delete=models.CASCADE)
+    amount = models.IntegerField()
     currency = models.ForeignKey(Currency, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now=False, auto_now_add=True)
 
     def __str__(self) -> str:
-        return f"Bidding on: {self.auction_bidded.title} with: {self.bid_amount} {self.currency.name}"
+        return f"Bidding on: {self.item.title} with: {self.amount} {self.currency.name}"
 
 
 class Comment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    auction_commented = models.ForeignKey(Auction, on_delete=models.CASCADE)
-    review = models.TextField()
+    item = models.ForeignKey(Item, on_delete=models.CASCADE)
+    description = models.TextField()
     created_at = models.DateTimeField(auto_now=False, auto_now_add=True)
 
     def __str__(self) -> str:
-        return f"Comment on: {self.auction_commented.title}"
+        return f"Comment on: {self.item.title}"

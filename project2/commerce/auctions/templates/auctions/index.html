@@ -3,5 +3,25 @@
 {% block body %}
     <h2>Active Listings</h2>
 
-    TODO
+    <table>
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Starting Bid</th>
+                <th>Current Bid</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for item in items %}
+            <tr>
+                <td>{{ item.title }}</td>
+                <td>{{ item.description }}</td>
+                <td>{{ item.starting_bid }}</td>
+                <td>0</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
 {% endblock %}

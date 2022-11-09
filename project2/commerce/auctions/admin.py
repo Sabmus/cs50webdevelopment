@@ -6,7 +6,7 @@ from . import models
 admin.site.register(models.Category)
 admin.site.register(models.BaseCurrency)
 admin.site.register(models.Currency)
-admin.site.register(models.Auction)
+admin.site.register(models.Item)
 admin.site.register(models.Bid)
 admin.site.register(models.Comment)
 admin.site.register(models.User)

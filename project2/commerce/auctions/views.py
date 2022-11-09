@@ -2,16 +2,21 @@
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
+from django.utils import timezone
 
-from .models import User
+from . import models
 from . import forms
 
 
 def index(request):
-    return render(request, "auctions/index.html")
+    # list all available by last_until items to auction
+    items = models.Item.objects.filter(last_until__gte=timezone.now()).all()
+    return render(request, template_name="auctions/index.html", context={
+        "items": items
+    })
 
 
 def login_view(request):
@@ -68,7 +73,20 @@ def register(request):
 
 @login_required(login_url='login')
 def create_listing(request):
-    form = forms.CreateListingForm()
+    if request.method == "POST":
+        form = forms.CreateListingForm(request.POST)
+        if form.is_valid():
+            item = models.Item(**form.cleaned_data)
+            item.owner = request.user
+            item.save()
+            # after save. update field "last_until" so be the addition of bid_duration to created_at
+            record = models.Item.objects.get(pk=item.id)
+            record.last_until = record.created_at + timedelta(days=record.bid_duration)
+            record.save(update_fields=["last_until"])
+            return HttpResponseRedirect(reverse('index'))
+    else:
+        form = forms.CreateListingForm()
+
     return render(request, "auctions/create_listing.html", context={
         "form": form
     })

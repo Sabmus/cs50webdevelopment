@@ -4,6 +4,6 @@ from . import models
 
 class CreateListingForm(forms.ModelForm):
     class Meta:
-        model = models.Auction
+        model = models.Item
         fields = '__all__'
-        exclude = ["user"]
+        exclude = ["owner", "last_until"]
