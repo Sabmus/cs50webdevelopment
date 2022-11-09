@@ -46,6 +46,7 @@ class Item(models.Model):
     slug = models.SlugField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now=False, auto_now_add=True)
     last_until = models.DateTimeField(blank=True, null=True)
+    active = models.BooleanField(default=False, blank=True)
 
     def __str__(self) -> str:
         return f"Action #{self.id}: Item: {self.title}, staring bid: {self.starting_bid} {self.currency.name}"
