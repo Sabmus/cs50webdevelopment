@@ -6,6 +6,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from django.utils import timezone
+from datetime import timedelta
 
 from . import models
 from . import forms
@@ -80,13 +81,20 @@ def create_listing(request):
             item.owner = request.user
             item.save()
             # after save. update field "last_until" so be the addition of bid_duration to created_at
-            record = models.Item.objects.get(pk=item.id)
-            record.last_until = record.created_at + timedelta(days=record.bid_duration)
-            record.save(update_fields=["last_until"])
+            # record = models.Item.objects.get(pk=item.id)
+            # record.last_until = record.created_at + timedelta(days=record.bid_duration)
+            # record.save(update_fields=["last_until"])
             return HttpResponseRedirect(reverse('index'))
     else:
         form = forms.CreateListingForm()
 
     return render(request, "auctions/create_listing.html", context={
         "form": form
+    })
+
+
+def list_item(request, slug):
+    item = models.Item.objects.get(slug=slug)
+    return render(request, template_name="auctions/item.html", context={
+        "item": item
     })

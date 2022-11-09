@@ -1,6 +1,10 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.db.models.signals import pre_save
+from django.dispatch import receiver
 from datetime import timedelta
+
+from . import util
 
 
 class User(AbstractUser):
@@ -39,11 +43,21 @@ class Item(models.Model):
     currency = models.ForeignKey(Currency, on_delete=models.CASCADE)
     bid_duration = models.IntegerField()  # should be duration in days
     image = models.URLField(max_length=200, blank=True)
+    slug = models.SlugField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now=False, auto_now_add=True)
     last_until = models.DateTimeField(blank=True, null=True)
 
     def __str__(self) -> str:
         return f"Action #{self.id}: Item: {self.title}, staring bid: {self.starting_bid} {self.currency.name}"
+
+
+@receiver(pre_save, sender=Item)
+def pre_save_receiver(sender, instance, *args, **kwargs):
+    if not instance.slug:
+        instance.slug = util.unique_slug_generator(instance)
+
+    if not instance.last_until:
+        instance.last_until = instance.created_at + timedelta(days=instance.bid_duration)
 
 
 class Bid(models.Model):

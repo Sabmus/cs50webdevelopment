@@ -15,7 +15,7 @@
         <tbody>
         {% for item in items %}
             <tr>
-                <td>{{ item.title }}</td>
+                <td><a href="{% url 'list_item' item.slug %}">{{ item.title }}</a></td>
                 <td>{{ item.description }}</td>
                 <td>{{ item.starting_bid }}</td>
                 <td>0</td>
