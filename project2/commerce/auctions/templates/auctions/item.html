@@ -1,5 +1,33 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-    {{ item.title }}
+    
+<div class="card" style="width: 50%;">
+    <div class="row no-gutters">
+        <div class="col-md-4">
+            <img src="{{ item.image }}" class="card-img-top" alt="...">
+        </div>
+        <div class="col-md-8">
+            <div class="card-body">
+                <h5 class="card-title">{{ item.title }}</h5>
+                <p class="card-text">{{ item.description }}</p>
+                <p class="card-text">Current bid: {{ item.starting_bid }} {{ item.currency.name }}</p>
+                <p class="card-text">Available until: {{ item.last_until }}</p>
+                
+                <a href="#" class="card-link">Place Bid</a>
+                <a href="#" class="card-link">Add to watchlist</a>
+
+            </div>
+        </div>
+    </div>
+    <div class="row no-gutters">
+        <div class="col-md-12">
+            <div class="card-footer text-muted">
+                Listed by: <span>{{ item.owner }}</span> on {{ item.category.name }} category
+            </div>
+        </div>
+    </div>
+    
+</div>
+
 {% endblock %}

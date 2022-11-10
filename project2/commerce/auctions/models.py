@@ -42,7 +42,7 @@ class Item(models.Model):
     starting_bid = models.IntegerField()
     currency = models.ForeignKey(Currency, on_delete=models.CASCADE)
     bid_duration = models.IntegerField()  # should be duration in days
-    image = models.URLField(max_length=200, blank=True)
+    image = models.URLField(max_length=200, blank=True, default="https://apply.sts.net.pk/assets/images/default-upload-image.jpg")
     slug = models.SlugField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now=False, auto_now_add=True)
     last_until = models.DateTimeField(blank=True, null=True)
