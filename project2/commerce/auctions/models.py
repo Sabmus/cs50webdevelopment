@@ -51,6 +51,12 @@ class Item(models.Model):
     def __str__(self) -> str:
         return f"Action #{self.id}: Item: {self.title}, staring bid: {self.starting_bid} {self.currency.name}"
 
+    def current_max_bid(self):
+        max_bid = self.starting_bid
+        if self.bid_maded is not None:
+            max_bid = self.bid_maded.aggregate(models.Max("amount"))["amount__max"]
+        return max_bid
+
 
 @receiver(pre_save, sender=Item)
 def pre_save_receiver(sender, instance, *args, **kwargs):

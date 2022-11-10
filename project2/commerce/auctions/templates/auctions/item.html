@@ -11,7 +11,7 @@
             <div class="card-body">
                 <h5 class="card-title">{{ item.title }} - <span class="span_link"><a href="#">Add to watchlist</a></span></h5>
                 <p class="card-text">{{ item.description }}</p>
-                <p class="card-text">Current bid: {{ item.starting_bid }} {{ item.currency.name }}</p>
+                <p class="card-text">Current bid: {{ max_bid }} {{ item.currency.name }}</p>
                 <p class="card-text">Available until: {{ item.last_until }}</p>
                 
                 <div>

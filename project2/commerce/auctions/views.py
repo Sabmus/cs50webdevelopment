@@ -99,7 +99,8 @@ def list_item(request, slug):
     if item.exists():
         return render(request, template_name="auctions/item.html", context={
             "item": item.first(),
-            "bid_form": bid_form
+            "bid_form": bid_form,
+            "max_bid": item.first().current_max_bid()
         })
     
     return render(request, template_name="auctions/item.html", context={
@@ -117,7 +118,7 @@ def bid_item(request, slug):
             if form.is_valid():
                 bid = models.Bid(**form.cleaned_data)
                 bid.bidder = request.user
-                bid.item = item
+                bid.item = item.first()
                 bid.save()
     
     return HttpResponseRedirect(reverse("list_item", args=(slug,)))
