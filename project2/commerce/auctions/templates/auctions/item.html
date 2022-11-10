@@ -15,9 +15,8 @@
                 <p class="card-text">Available until: {{ item.last_until }}</p>
                 
                 <div>
-                    <form action="{% url 'bid_item' %}" method="post">
+                    <form action="{% url 'bid_item' item.slug %}" method="post">
                         {% csrf_token %}
-                        <input type="hidden" name="slug" value={{ item.slug }}>
                         <div class="flex_container">
                             <div class="bid">
                                 {{ bid_form.amount }}

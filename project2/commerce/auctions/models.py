@@ -62,8 +62,8 @@ def pre_save_receiver(sender, instance, *args, **kwargs):
 
 
 class Bid(models.Model):
-    bidder = models.ForeignKey(User, on_delete=models.CASCADE)
-    item = models.ForeignKey(Item, on_delete=models.CASCADE)
+    bidder = models.ForeignKey(User, on_delete=models.CASCADE, related_name="bids")
+    item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name="bid_maded")
     amount = models.IntegerField()
     currency = models.ForeignKey(Currency, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now=False, auto_now_add=True)
@@ -73,8 +73,8 @@ class Bid(models.Model):
 
 
 class Comment(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    item = models.ForeignKey(Item, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="posts")
+    item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name="comments")
     description = models.TextField()
     created_at = models.DateTimeField(auto_now=False, auto_now_add=True)
 
