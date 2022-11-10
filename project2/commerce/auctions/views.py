@@ -2,10 +2,11 @@
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
-from django.http import HttpResponseRedirect, Http404
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from django.utils import timezone
+from datetime import timedelta
 
 
 from . import models
@@ -79,6 +80,9 @@ def create_listing(request):
             item = models.Item(**form.cleaned_data)
             item.owner = request.user
             item.save()
+            # after save. update field "last_until" so be the addition of bid_duration to created_at
+            item.last_until = item.created_at + timedelta(days=item.bid_duration)
+            item.save(update_fields=["last_until"])
             return HttpResponseRedirect(reverse('index'))
     else:
         form = forms.CreateListingForm()
@@ -93,7 +97,6 @@ def list_item(request, slug):
     bid_form = forms.CreateBidForm()
     item = models.Item.objects.filter(slug__iexact=slug)
     if item.exists():
-        item.bid_maded
         return render(request, template_name="auctions/item.html", context={
             "item": item.first(),
             "bid_form": bid_form
@@ -107,12 +110,15 @@ def list_item(request, slug):
 @login_required(login_url='login')
 def bid_item(request, slug):
     if request.method == "POST":
-        form = forms.CreateBidForm(request.POST)
-        if form.is_valid():
-            bid = models.Bid(**form.cleaned_data)
-            bid.bidder = request.user
-            bid.item = models.Item.objects.get(slug=slug)
-            bid.save()
+        item = models.Item.objects.filter(slug__iexact=slug)
+        if item.exists():
+            # all_bids = item.bid_maded.all()
+            form = forms.CreateBidForm(request.POST)
+            if form.is_valid():
+                bid = models.Bid(**form.cleaned_data)
+                bid.bidder = request.user
+                bid.item = item
+                bid.save()
     
     return HttpResponseRedirect(reverse("list_item", args=(slug,)))
     

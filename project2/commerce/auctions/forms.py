@@ -6,7 +6,7 @@ class CreateListingForm(forms.ModelForm):
     class Meta:
         model = models.Item
         fields = '__all__'
-        exclude = ["owner", "slug", "last_until"]
+        exclude = ["owner", "slug", "last_until", "active"]
 
 
 class CreateBidForm(forms.ModelForm):

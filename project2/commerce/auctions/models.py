@@ -1,6 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-from django.db.models.signals import pre_save
+from django.db.models.signals import pre_save, post_save
 from django.dispatch import receiver
 from datetime import timedelta
 
@@ -56,9 +56,6 @@ class Item(models.Model):
 def pre_save_receiver(sender, instance, *args, **kwargs):
     if not instance.slug:
         instance.slug = util.unique_slug_generator(instance)
-
-    if not instance.last_until:
-        instance.last_until = instance.created_at + timedelta(days=instance.bid_duration)
 
 
 class Bid(models.Model):
