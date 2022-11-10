@@ -2,28 +2,43 @@
 
 {% block body %}
     
-<div class="card" style="width: 50%;">
+<div class="card" style="width: 70%;">
     <div class="row no-gutters">
         <div class="col-md-4">
             <img src="{{ item.image }}" class="card-img-top" alt="...">
         </div>
         <div class="col-md-8">
             <div class="card-body">
-                <h5 class="card-title">{{ item.title }}</h5>
+                <h5 class="card-title">{{ item.title }} - <span class="span_link"><a href="#">Add to watchlist</a></span></h5>
                 <p class="card-text">{{ item.description }}</p>
                 <p class="card-text">Current bid: {{ item.starting_bid }} {{ item.currency.name }}</p>
                 <p class="card-text">Available until: {{ item.last_until }}</p>
                 
-                <a href="#" class="card-link">Place Bid</a>
-                <a href="#" class="card-link">Add to watchlist</a>
-
+                <div>
+                    <form action="{% url 'bid_item' %}" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="slug" value={{ item.slug }}>
+                        <div class="flex_container">
+                            <div class="bid">
+                                {{ bid_form.amount }}
+                            </div>
+                            <div class="bid">
+                                {{ bid_form.currency }}
+                            </div>
+                            <div class="bid">
+                                <input type="submit" class="btn_as_link" value="Place Bid">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                
             </div>
         </div>
     </div>
     <div class="row no-gutters">
         <div class="col-md-12">
             <div class="card-footer text-muted">
-                Listed by: <span>{{ item.owner }}</span> on {{ item.category.name }} category
+                <p class="text_footer">Listed by: <span id="wizard">{{ item.owner }}</span> on {{ item.category.name }} category</p>
             </div>
         </div>
     </div>

@@ -90,12 +90,26 @@ def create_listing(request):
 
 def list_item(request, slug):
     # check is item exists
+    bid_form = forms.CreateBidForm()
     item = models.Item.objects.filter(slug__iexact=slug)
     if item.exists():
         return render(request, template_name="auctions/item.html", context={
-            "item": item.first()
+            "item": item.first(),
+            "bid_form": bid_form
         })
     
     return render(request, template_name="auctions/item.html", context={
         "message": "Item not found."
     })
+
+
+@login_required(login_url='login')
+def bid_item(request):
+    if request.method == "POST":
+        slug = request.POST["slug"]
+        form = forms.CreateBidForm(request.POST)
+        if form.is_valid():
+            bid = models.Bid(**form.cleaned_data)
+            bid.bidder = request.user
+            bid.item = models.Item.objects.get(slug=slug)
+

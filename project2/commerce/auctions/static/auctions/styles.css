@@ -1,3 +1,53 @@
 body {
     padding: 10px;
 }
+
+#wizard {
+    color: goldenrod;
+}
+
+.span_link {
+    font-size: 14px;
+}
+
+.text_footer {
+    text-align: right;
+    margin: 0;
+    padding: 0;
+}
+
+.flex_container {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0;
+    padding: 0;
+}
+
+.bid {
+    margin: 0;
+    padding: 0;
+}
+.bid > input {
+    width: 100px;
+    margin-right: 5px;
+}
+.bid > select {
+    width: 90px;
+    height: 30px;
+    margin-right: 5px;
+}
+
+.bid > input[type="submit"] {
+    background: none;
+    border: none;
+    padding: 0;
+    color: #007bff;
+    cursor: pointer;
+    width: 65px;
+    vertical-align: middle;
+    margin: 0;
+}
+.bid > input[type="submit"]:hover {
+    text-decoration: underline;
+    color: #0056b3;
+}

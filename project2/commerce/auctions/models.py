@@ -31,7 +31,7 @@ class Currency(models.Model):
     conversion_rate = models.FloatField()
 
     def __str__(self) -> str:
-        return f"Currency: {self.name} equals to: {self.conversion_rate} {self.base_currency.name}"
+        return f"{self.name}"
 
 
 class Item(models.Model):
