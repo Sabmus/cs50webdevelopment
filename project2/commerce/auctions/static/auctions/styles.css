@@ -24,6 +24,7 @@ body {
 }
 
 .bid {
+    height: 30px;
     margin: 0;
     padding: 0;
 }
@@ -45,9 +46,15 @@ body {
     cursor: pointer;
     width: 65px;
     vertical-align: middle;
-    margin: 0;
+    margin-left: 10px;
 }
 .bid > input[type="submit"]:hover {
     text-decoration: underline;
     color: #0056b3;
+}
+
+.close_bid_link {
+    display: inline-block;
+    margin-left: 10px;
+    vertical-align: middle;
 }

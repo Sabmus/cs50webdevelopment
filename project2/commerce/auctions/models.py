@@ -8,7 +8,7 @@ from . import util
 
 
 class User(AbstractUser):
-    pass
+    watchlist = models.ManyToManyField("Item", related_name="watched_by")
 
 
 class Category(models.Model):
@@ -29,6 +29,7 @@ class Currency(models.Model):
     name = models.CharField(max_length=7)
     base_currency = models.ForeignKey(BaseCurrency, on_delete=models.CASCADE)
     conversion_rate = models.FloatField()
+    priority = models.IntegerField()  # Galleon > Sickle > Knut
 
     def __str__(self) -> str:
         return f"{self.name}"
@@ -46,17 +47,17 @@ class Item(models.Model):
     slug = models.SlugField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now=False, auto_now_add=True)
     last_until = models.DateTimeField(blank=True, null=True)
-    active = models.BooleanField(default=False, blank=True)
+    active = models.BooleanField(default=True, blank=True)
 
     def __str__(self) -> str:
         return f"Action #{self.id}: Item: {self.title}, staring bid: {self.starting_bid} {self.currency.name}"
 
-    def current_max_bid(self):
-        max_bid = self.starting_bid
+    def last_bid(self):
         # print(f"Check model: {self.bid_maded.all().count()}")
         if self.bid_maded.all().count() > 0:
-            max_bid = self.bid_maded.aggregate(models.Max("amount"))["amount__max"]
-        return max_bid
+            bid = self.bid_maded.last()
+            return bid
+        return None
 
 
 @receiver(pre_save, sender=Item)

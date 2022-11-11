@@ -98,20 +98,18 @@ def item_listed(request, slug):
     item = models.Item.objects.filter(slug__iexact=slug)
     if item.exists():
         item_found = item.first()
-        max_bid = item_found.current_max_bid()
-        currency = models.Currency()
+        last_bid = item_found.last_bid()
+
         try:
-            max_bid = models.Bid.objects.get(amount=max_bid)
-            currency = max_bid.currency
-        except models.Bid.DoesNotExist as e:
-            # print(e)
-            currency = item_found.currency
+            in_watchlist = item_found.watched_by.get(username=request.user)
+        except request.user.DoesNotExist as e:
+            in_watchlist = None
 
         return render(request, template_name="auctions/item.html", context={
             "item": item_found,
             "bid_form": bid_form,
-            "max_bid": max_bid,
-            "currency": currency
+            "last_bid": last_bid,
+            "in_watchlist": in_watchlist
         })
     
     return render(request, template_name="auctions/item.html", context={
@@ -121,16 +119,73 @@ def item_listed(request, slug):
 
 @login_required(login_url='login')
 def bid_item(request, slug):
+    error_message = ""
     if request.method == "POST":
-        item = models.Item.objects.filter(slug__iexact=slug)
-        if item.exists():
-            # all_bids = item.bid_maded.all()
-            form = forms.CreateBidForm(request.POST)
-            if form.is_valid():
-                bid = models.Bid(**form.cleaned_data)
-                bid.bidder = request.user
-                bid.item = item.first()
-                bid.save()
+        form = forms.CreateBidForm(request.POST)
+        if form.is_valid():
+            item = models.Item.objects.filter(slug__iexact=slug)
+            if item.exists():
+                item_found = item.first()
+                last_bid = item_found.last_bid()
+                bidded_currency = models.Currency.objects.get(name=form.cleaned_data["currency"])
+                amount_bidded = int(form.cleaned_data["amount"] * bidded_currency.conversion_rate)
+
+                # convert the amount bidded to the base currency to compare
+                if last_bid is not None:
+                    amount = int(last_bid.amount * last_bid.currency.conversion_rate)
+                else:
+                    amount = int(item_found.starting_bid * item_found.currency.conversion_rate)
+
+                if amount_bidded > amount:
+                    bid = models.Bid(**form.cleaned_data)
+                    bid.bidder = request.user
+                    bid.item = item_found
+                    bid.save()
+                    return HttpResponseRedirect(reverse("item_listed", args=(slug,)))
+                else:
+                    error_message = "The amount bidded must be greater than the current amount."
+            else:
+                error_message = "The item was not found."
+        else:
+            error_message = "Please submit correct data."
+
+        return render(request, template_name="auctions/item.html", context={
+            "item": item_found,
+            "bid_form": form,
+            "last_bid": last_bid,
+            "error_message": error_message
+        })
     
-    return HttpResponseRedirect(reverse("list_item", args=(slug,)))
+    return HttpResponseRedirect(reverse("item_listed", args=(slug,)))
+
+
+@login_required(login_url='login')
+def close_bid(request, slug):
+    item = models.Item.objects.filter(slug__iexact=slug)
+    if item.exists():
+        item_found = item.first()
+        if request.user == item_found.owner:
+            item_found.active = False
+            item_found.save(update_fields=["active"])
     
+    return HttpResponseRedirect(reverse("item_listed", args=(slug,)))
+
+
+@login_required(login_url='login')
+def add_to_watchlist(request, slug):
+    item = models.Item.objects.filter(slug__iexact=slug)
+    if item.exists():
+        item_found = item.first()
+        request.user.watchlist.add(item_found)
+
+    return HttpResponseRedirect(reverse("item_listed", args=(slug,)))
+
+
+@login_required(login_url='login')
+def remove_from_watchlist(request, slug):
+    item = models.Item.objects.filter(slug__iexact=slug)
+    if item.exists():
+        item_found = item.first()
+        request.user.watchlist.remove(item_found)
+
+    return HttpResponseRedirect(reverse("item_listed", args=(slug,)))
