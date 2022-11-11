@@ -53,7 +53,8 @@ class Item(models.Model):
 
     def current_max_bid(self):
         max_bid = self.starting_bid
-        if self.bid_maded is not None:
+        # print(f"Check model: {self.bid_maded.all().count()}")
+        if self.bid_maded.all().count() > 0:
             max_bid = self.bid_maded.aggregate(models.Max("amount"))["amount__max"]
         return max_bid
 

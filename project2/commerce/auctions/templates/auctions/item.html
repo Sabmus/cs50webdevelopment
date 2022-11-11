@@ -9,11 +9,17 @@
         </div>
         <div class="col-md-8">
             <div class="card-body">
-                <h5 class="card-title">{{ item.title }} - <span class="span_link"><a href="#">Add to watchlist</a></span></h5>
+                <h5 class="card-title">
+                    {{ item.title }}
+                    {% if user.is_authenticated %}
+                    - <span class="span_link"><a href="#">Add to watchlist</a></span>
+                    {% endif %}
+                </h5>
                 <p class="card-text">{{ item.description }}</p>
-                <p class="card-text">Current bid: {{ max_bid }} {{ item.currency.name }}</p>
+                <p class="card-text">Current bid: {{ max_bid }} {{ currency.name }}</p>
                 <p class="card-text">Available until: {{ item.last_until }}</p>
                 
+                {% if user.is_authenticated %}
                 <div>
                     <form action="{% url 'bid_item' item.slug %}" method="post">
                         {% csrf_token %}
@@ -30,6 +36,7 @@
                         </div>
                     </form>
                 </div>
+                {% endif %}
                 
             </div>
         </div>

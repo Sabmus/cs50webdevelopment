@@ -92,15 +92,26 @@ def create_listing(request):
     })
 
 
-def list_item(request, slug):
+def item_listed(request, slug):
     # check is item exists
     bid_form = forms.CreateBidForm()
     item = models.Item.objects.filter(slug__iexact=slug)
     if item.exists():
+        item_found = item.first()
+        max_bid = item_found.current_max_bid()
+        currency = models.Currency()
+        try:
+            max_bid = models.Bid.objects.get(amount=max_bid)
+            currency = max_bid.currency
+        except models.Bid.DoesNotExist as e:
+            # print(e)
+            currency = item_found.currency
+
         return render(request, template_name="auctions/item.html", context={
-            "item": item.first(),
+            "item": item_found,
             "bid_form": bid_form,
-            "max_bid": item.first().current_max_bid()
+            "max_bid": max_bid,
+            "currency": currency
         })
     
     return render(request, template_name="auctions/item.html", context={
