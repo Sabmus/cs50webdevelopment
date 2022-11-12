@@ -237,3 +237,16 @@ def categories(request):
     return render(request, template_name="auctions/categories.html", context={
         "categs": categs
     })
+
+
+def category(request, name):
+    item_by_category = models.Category.objects.get(name=name).item_set.all()
+    if item_by_category.exists():
+        return render(request, template_name="auctions/index.html", context={
+            "items": item_by_category,
+            "category_title": f"All Listing in {name}"
+        })
+
+    return render(request, template_name="auctions/index.html", context={
+        "items": None,
+    })

@@ -5,8 +5,8 @@
 
     <ul>
     {% for cate in categs %}
-        <li><a href="#">{{ cate }}</a></li>
+        <li><a href="{% url 'category' cate.name %}">{{ cate }}</a></li>
     {% endfor %}
     </ul>
-    
+
 {% endblock %}
