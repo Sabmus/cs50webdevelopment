@@ -100,11 +100,13 @@ def item_listed(request, slug):
         item_found = item.first()
         last_bid = item_found.last_bid()
 
-        try:
-            in_watchlist = item_found.watched_by.get(username=request.user)
-        except request.user.DoesNotExist as e:
-            in_watchlist = None
-
+        in_watchlist = None
+        if request.user.is_authenticated:
+            try:
+                in_watchlist = item_found.watched_by.get(username=request.user)
+            except request.user.DoesNotExist:
+                pass
+            
         return render(request, template_name="auctions/item.html", context={
             "item": item_found,
             "bid_form": bid_form,
