@@ -92,17 +92,20 @@
             <h3 style="height: 10%;">Comments</h3>
 
             <div class="scrollable_div">
-
+                {% for comment in comments %}
+                    <p>{{ comment }}</p>
+                {% endfor %}
             </div>
+
             <div class="comment_div">
-                <form action="#" method="post" class="comment_form">
+                <form action="{% url 'add_comment' item.slug %}" method="post" class="comment_form">
+                    {% csrf_token %}
                     <div class="input_comment com_input_1">
-                        <input type="text" name="comment" id="id_comment" placeholder="your comment...">
+                        {{ comment_form.description }}
                     </div>
                     <div class="input_comment com_input_2">
                         <input type="submit" value="Send">
                     </div>
-                
                 </form>
             </div>
                 

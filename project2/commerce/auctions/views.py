@@ -93,12 +93,14 @@ def create_listing(request):
 
 
 def item_listed(request, slug):
-    # check is item exists
     bid_form = forms.CreateBidForm()
+    comment_form = forms.CommentForm()
+    # check is item exists
     item = models.Item.objects.filter(slug__iexact=slug)
     if item.exists():
         item_found = item.first()
         last_bid = item_found.last_bid()
+        comments = item_found.comments.all()
 
         in_watchlist = None
         if request.user.is_authenticated:
@@ -111,7 +113,9 @@ def item_listed(request, slug):
             "item": item_found,
             "bid_form": bid_form,
             "last_bid": last_bid,
-            "in_watchlist": in_watchlist
+            "in_watchlist": in_watchlist,
+            "comment_form": comment_form,
+            "comments": comments
         })
     
     return render(request, template_name="auctions/item.html", context={
@@ -191,3 +195,45 @@ def remove_from_watchlist(request, slug):
         request.user.watchlist.remove(item_found)
 
     return HttpResponseRedirect(reverse("item_listed", args=(slug,)))
+
+
+@login_required(login_url='login')
+def add_comment(request, slug):
+    error_message = ""
+    if request.method == "POST":
+        form = forms.CommentForm(request.POST)
+        if form.is_valid():
+            item = models.Item.objects.filter(slug__iexact=slug)
+            if item.exists():
+                item_found = item.first()
+                comment = models.Comment(**form.cleaned_data)
+                comment.user = request.user
+                comment.item = item_found
+                comment.save()
+                return HttpResponseRedirect(reverse("item_listed", args=(slug,)))
+            else:
+                error_message = "The item was not found."
+        else:
+            error_message = "Please submit correct data."
+    
+    return render(request, template_name="auctions/item.html", context={
+        "item": item_found,
+        "bid_form": form,
+        "last_bid": item_found.last_bid(),
+        "error_message": error_message
+    })
+
+
+@login_required(login_url='login')
+def watchlist(request):
+    watchlisted = models.User.objects.get(username=request.user).watchlist.all()
+    return render(request, template_name="auctions/watchlist.html", context={
+        "watchlisted": watchlisted
+    })
+
+
+def categories(request):
+    categs = models.Category.objects.all()
+    return render(request, template_name="auctions/categories.html", context={
+        "categs": categs
+    })

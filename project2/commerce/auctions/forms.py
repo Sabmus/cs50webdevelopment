@@ -13,3 +13,9 @@ class CreateBidForm(forms.ModelForm):
     class Meta:
         model = models.Bid
         fields = ["amount", "currency"]
+
+
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = models.Comment
+        fields = ["description"]
