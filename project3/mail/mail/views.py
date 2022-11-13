@@ -7,7 +7,7 @@ from django.shortcuts import HttpResponse, HttpResponseRedirect, render
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 
-from .models import User, Email
+from . import models
 
 
 def index(request):
@@ -41,9 +41,9 @@ def compose(request):
     recipients = []
     for email in emails:
         try:
-            user = User.objects.get(email=email)
+            user = models.User.objects.get(email=email)
             recipients.append(user)
-        except User.DoesNotExist:
+        except models.User.DoesNotExist:
             return JsonResponse({
                 "error": f"User with email {email} does not exist."
             }, status=400)
@@ -57,7 +57,7 @@ def compose(request):
     users.add(request.user)
     users.update(recipients)
     for user in users:
-        email = Email(
+        email = models.Email(
             user=user,
             sender=request.user,
             subject=subject,
@@ -77,15 +77,15 @@ def mailbox(request, mailbox):
 
     # Filter emails returned based on mailbox
     if mailbox == "inbox":
-        emails = Email.objects.filter(
+        emails = models.Email.objects.filter(
             user=request.user, recipients=request.user, archived=False
         )
     elif mailbox == "sent":
-        emails = Email.objects.filter(
+        emails = models.Email.objects.filter(
             user=request.user, sender=request.user
         )
     elif mailbox == "archive":
-        emails = Email.objects.filter(
+        emails = models.Email.objects.filter(
             user=request.user, recipients=request.user, archived=True
         )
     else:
@@ -102,8 +102,8 @@ def email(request, email_id):
 
     # Query for requested email
     try:
-        email = Email.objects.get(user=request.user, pk=email_id)
-    except Email.DoesNotExist:
+        email = models.Email.objects.get(user=request.user, pk=email_id)
+    except models.Email.DoesNotExist:
         return JsonResponse({"error": "Email not found."}, status=404)
 
     # Return email contents
@@ -166,7 +166,7 @@ def register(request):
 
         # Attempt to create new user
         try:
-            user = User.objects.create_user(email, email, password)
+            user = models.User.objects.create_user(email, email, password)
             user.save()
         except IntegrityError as e:
             print(e)
