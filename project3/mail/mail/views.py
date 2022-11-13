@@ -1,3 +1,4 @@
+# https://cs50.harvard.edu/web/2020/projects/3/mail/#specification
 import json
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
