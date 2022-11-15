@@ -1,3 +1,27 @@
 textarea {
     min-height: 400px;
 }
+
+.email_div {
+    border: 1px solid rebeccapurple;
+    border-radius: 5px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+}
+.ptag {
+    flex-grow: 1;
+    margin: 0;
+    padding: 0;
+}
+.sender {
+    font-weight: bold;
+    margin-left: 5px;
+}
+.email {
+    margin-left: 10px;
+}
+.timestamp {
+    float: right;
+    margin-right: 10px;
+}
