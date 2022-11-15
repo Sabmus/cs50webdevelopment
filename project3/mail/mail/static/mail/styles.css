@@ -8,6 +8,10 @@ textarea {
     height: 40px;
     display: flex;
     align-items: center;
+    margin: -1px 0 -1px 0;
+}
+.email_div:hover {
+    border: 2px solid blue;
 }
 .ptag {
     flex-grow: 1;
@@ -18,10 +22,18 @@ textarea {
     font-weight: bold;
     margin-left: 5px;
 }
-.email {
+.a-email {
     margin-left: 10px;
 }
 .timestamp {
     float: right;
     margin-right: 10px;
+}
+
+.email-data > p {
+    margin: 0;
+    padding: 0;
+}
+.email-data > p > span {
+    font-weight: bold;
 }
