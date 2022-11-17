@@ -9,6 +9,15 @@
         <title>Google Search</title>
 
         <link rel="stylesheet" href="styles.css">
+
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                document.querySelector('#search-form').onsubmit = () => {
+                    console.log("hola");
+                };
+            });
+
+        </script>
     </head>
     <body>
         <div class="top_div">
@@ -24,7 +33,7 @@
         </div>
 
         <div class="input_a">
-            <form action="https://www.google.com/search" method="GET">
+            <form action="https://www.google.com/search" method="GET" id="search-form">
                 <div class="input_b">
                     <div class="input_search">
                         <div class="input_search_left">
@@ -35,14 +44,14 @@
                             </span>
                         </div>
                         <div class="actually_search_bar">
-                            <input class="the_input" maxlength="2048" name="q" type="text"
+                            <input class="the_input" maxlength="2048" name="q" type="text" id="search-input"
                                    aria-autocomplete="both" aria-haspopup="false" autocapitalize="off" autocomplete="off"
                                    autofocus="" role="combobox" spellcheck="false" title="Buscar" value="" aria-label="Buscar">
                         </div>
                     </div>
                     <div class="input_submit">
                         <input class="input_btn" value="Search with Google" type="submit">
-                        <input class="input_btn" value="I'm feeling lucky" type="submit">
+                        <input class="input_btn" id="lucky-btn" value="I'm feeling lucky" type="submit">
                     </div>
                 </div>
             </form>
