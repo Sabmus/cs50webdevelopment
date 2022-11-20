@@ -1,11 +1,11 @@
 #https://cs50.harvard.edu/web/2020/projects/4/network/#specification
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 
-from .models import User
+from . import models
 
 
 def index(request):
@@ -52,7 +52,7 @@ def register(request):
 
         # Attempt to create new user
         try:
-            user = User.objects.create_user(username, email, password)
+            user = models.User.objects.create_user(username, email, password)
             user.save()
         except IntegrityError:
             return render(request, "network/register.html", {
@@ -62,3 +62,31 @@ def register(request):
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "network/register.html")
+
+
+def posts(request, option):
+    # all for all posts, and following por following posts
+    if option == "all":
+        posts = models.Post.objects.all().order_by('-created_at')
+        return JsonResponse([post.serialize() for post in posts], safe=False)  # https://docs.djangoproject.com/en/4.1/ref/request-response/#jsonresponse-objects
+    if option == "following":
+        following = request.user.follower.all()
+        #posts = models.Post.objects.filter(author in )
+
+
+def create_post(request):
+    pass
+
+
+def edit_post(request, post_id):
+    pass
+
+
+def profile(request):
+    pass
+
+
+def liked_post(request, post_id):
+    pass
+
+

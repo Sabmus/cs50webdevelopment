@@ -5,7 +5,6 @@ from django.dispatch import receiver
 from django.db import models
 from django.urls import reverse
 
-
 """
 posts, follows and likes (and comments)
 
@@ -21,11 +20,11 @@ class User(AbstractUser):
 
 @receiver(m2m_changed, sender=User.follower.through)
 def m2m_changed_follower(sender, instance, action, pk_set, *args, **kwargs):
-    print(f"user: {instance.id}")
-    print(f"follower: {pk_set}")
     if action == "pre_add":
+        # if self id is in follows, remove it
         if instance.id in pk_set:
-            raise ValidationError("Can't self follow")
+            pk_set.remove(instance.id)
+            # raise ValidationError("Can't self follow")
 
 
 class Post(models.Model):
@@ -49,6 +48,14 @@ class Post(models.Model):
         if self.like - 1 >= 0:
             self.like -= 1
             self.save(update_fields='like')
+
+    def serialize(self):
+        return {
+            "username": self.author.username,
+            "content": self.content,
+            "created_at": self.created_at.strftime("%b %d %Y, %I:%M %p"),
+            "likes": self.like
+        }
 
 
 class Comment(models.Model):
