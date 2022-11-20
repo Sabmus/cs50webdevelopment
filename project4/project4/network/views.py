@@ -9,7 +9,11 @@ from . import models
 
 
 def index(request):
-    return render(request, "network/index.html")
+    # check if logged in, else redirect to login
+    if request.user.is_authenticated:
+        return render(request, "network/index.html")
+    else:
+        return HttpResponseRedirect(reverse('login'))
 
 
 def login_view(request):
@@ -65,17 +69,22 @@ def register(request):
 
 
 def posts(request, option):
-    # all for all posts, and following por following posts
     if option == "all":
         posts = models.Post.objects.all().order_by('-created_at')
         return JsonResponse([post.serialize() for post in posts], safe=False)  # https://docs.djangoproject.com/en/4.1/ref/request-response/#jsonresponse-objects
-    if option == "following":
-        following = request.user.follower.all()
-        #posts = models.Post.objects.filter(author in )
-
+    if option == "following" and request.user.is_authenticated:
+        following = models.User.objects.filter(follower__exact=request.user)
+        posts = models.Post.objects.filter(author__in=following).order_by('-created_at')
+        return JsonResponse([post.serialize() for post in posts], safe=False)
+    else:
+        return JsonResponse({'message': 'You must be logged in to see this page.'}, status=400)
+        
 
 def create_post(request):
-    pass
+    if request.method != "POST":
+        return JsonResponse({'message': 'POST request required.'}, status=400)
+
+
 
 
 def edit_post(request, post_id):
@@ -83,7 +92,7 @@ def edit_post(request, post_id):
 
 
 def profile(request):
-    pass
+    return HttpResponse(request)
 
 
 def liked_post(request, post_id):

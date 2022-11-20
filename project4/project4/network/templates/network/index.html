@@ -1,5 +1,24 @@
 {% extends "network/layout.html" %}
 
 {% block body %}
-    TODO
+    <div class="general">
+        {% if user.is_authenticated %}
+        <div id="profile">
+            profile
+        </div>
+        <div id="new_post">
+            <form id="form_post">
+                <textarea class="form-control" id="post-content" placeholder="Write something!"></textarea>
+                <input type="submit" class="btn btn-primary"/>
+            </form>
+        </div>
+        {% endif %}
+        <div id="posts">
+            posts
+            posts
+            posts
+            posts
+            posts
+        </div>
+    </div>
 {% endblock %}
