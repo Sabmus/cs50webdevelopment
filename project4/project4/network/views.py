@@ -86,8 +86,16 @@ def following(request):
 def create_post(request):
     if request.method != "POST":
         return JsonResponse({'message': 'POST request required.'}, status=400)
-    else:
-        return JsonResponse({'message': 'OK'}, status=200)
+    
+    content = request.POST["content"]
+    post = models.Post(
+        author=request.user,
+        content=content
+    )
+    post.save()
+
+    posts = models.Post.objects.all().order_by('-created_at')
+    return JsonResponse([post.serialize() for post in posts], safe=False)
 
 
 def edit_post(request, post_id):

@@ -6,15 +6,13 @@
         <div id="new_post">
             <form id="form_post">
                 {% csrf_token %}
-                <textarea class="form-control" id="content" placeholder="Write something!"></textarea>
+                <textarea class="form-control" id="content" name="content" placeholder="Write something!"></textarea>
                 <input type="submit" class="btn btn-primary"/>
             </form>
         </div>
         {% endif %}
         <div id="posts">
-            {% for post in posts %}
-                {{ post }}
-            {% endfor %}
+            <!-- posts list -->
         </div>
     </div>
 {% endblock %}
