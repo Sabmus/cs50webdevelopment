@@ -1,4 +1,5 @@
-#https://cs50.harvard.edu/web/2020/projects/4/network/#specification
+# https://cs50.harvard.edu/web/2020/projects/4/network/#specification
+# https://docs.djangoproject.com/en/4.1/ref/request-response/#jsonresponse-objects
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
@@ -11,7 +12,10 @@ from . import models
 def index(request):
     # check if logged in, else redirect to login
     if request.user.is_authenticated:
-        return render(request, "network/index.html")
+        posts = models.Post.objects.all().order_by('-created_at')
+        return render(request, "network/index.html", context={
+            'posts': posts
+        })
     else:
         return HttpResponseRedirect(reverse('login'))
 
@@ -68,23 +72,22 @@ def register(request):
         return render(request, "network/register.html")
 
 
-def posts(request, option):
-    if option == "all":
-        posts = models.Post.objects.all().order_by('-created_at')
-        return JsonResponse([post.serialize() for post in posts], safe=False)  # https://docs.djangoproject.com/en/4.1/ref/request-response/#jsonresponse-objects
-    if option == "following" and request.user.is_authenticated:
+def following(request):
+    if request.user.is_authenticated:
         following = models.User.objects.filter(follower__exact=request.user)
         posts = models.Post.objects.filter(author__in=following).order_by('-created_at')
-        return JsonResponse([post.serialize() for post in posts], safe=False)
+        return render(request, template_name='network/following.html', context={
+            'posts': posts
+        })
     else:
-        return JsonResponse({'message': 'You must be logged in to see this page.'}, status=400)
+        return HttpResponseRedirect(reverse('login'))
         
 
 def create_post(request):
     if request.method != "POST":
         return JsonResponse({'message': 'POST request required.'}, status=400)
-
-
+    else:
+        return JsonResponse({'message': 'OK'}, status=200)
 
 
 def edit_post(request, post_id):
