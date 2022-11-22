@@ -3,5 +3,57 @@
     justify-content: center;
 }
 .general {
-    width: 70%;
+    width: 500px;
+}
+@media (max-width: 400px){
+    .general {
+        width: 100%;
+    }
+}
+
+#new_post {
+    margin: 10px 0 10px 0;
+}
+#new_post_form {
+    overflow: hidden;
+}
+.btn-primary {
+    margin-top: 5px;
+    float: right;
+}
+
+#posts {
+    display: flex;
+    gap: 5px;
+    flex-direction: column;
+}
+.post_div {
+    position: relative;
+}
+.like-btn {
+    position: absolute;
+    bottom: 0;
+    left: 90%;
+}
+/*
+.bi {
+    position: absolute;
+    fill: red;
+    bottom: 0;
+    left: 89%;
+}
+.likes {
+    position: absolute;
+    bottom: 2px;
+    left: 95%;
+}
+*/
+/*.bi:hover {
+    fill: red;
+    filter: grayscale(0%);
+}*/
+.ptag_post {
+    margin: 0;
+    padding: 0;
+    line-height: 25px;
 }
