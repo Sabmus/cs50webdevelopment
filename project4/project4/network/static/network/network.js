@@ -1,12 +1,19 @@
 document.addEventListener('DOMContentLoaded', () => {
 
     // add event listener to form post request
-    document.querySelector("#form_post").addEventListener('submit', ev => create_post(ev));
-
+    document.querySelectorAll(".like_btn").forEach(button => {
+        let counter = 0;
+        button.addEventListener('click', event => {
+            counter++;
+            const element = event.target;
+            element.innerHTML = "likes: " + counter.toString();
+            console.log("like btn clicked!");
+        });
+    });
 
 });
 
-
+/*
 function create_post(ev) {
     ev.preventDefault();
 
@@ -38,4 +45,4 @@ function create_post(ev) {
         });
     })
     .catch(error => console.log(error));
-}
+}*/

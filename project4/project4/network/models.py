@@ -35,7 +35,7 @@ class Post(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"Post #{self.id}, authored by: {self.user.username}"
+        return f"Post #{self.id}, authored by: {self.author}"
 
     def get_absolute_url(self):
         return reverse("model_detail", kwargs={"pk": self.pk})
