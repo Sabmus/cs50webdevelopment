@@ -54,10 +54,11 @@ class Post(models.Model):
 
     def serialize(self):
         return {
-            "username": self.author.username,
+            "id": self.id,
+            "author": self.author.username,
             "content": self.content,
             "created_at": self.created_at.strftime("%b %d %Y, %I:%M %p"),
-            "likes": self.like
+            "like": self.like
         }
 
 

@@ -55,6 +55,9 @@
     display: flex;
     justify-content: space-between;
 }
+.likes {
+    margin-left: 5px;
+}
 
 
 
@@ -63,4 +66,7 @@
 }
 .bi:hover {
     fill: rgb(255, 73, 73);
+}
+.like_section {
+    user-select: none;
 }

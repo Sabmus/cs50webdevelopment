@@ -16,27 +16,21 @@ def index(request):
     return render(request, template_name='network/index.html', context={})
 
 
+def all_posts(request):
+    return render(request, template_name='network/posts.html', context={})
+
+
 @login_required(login_url='login')
 def posts(request, option):
-    # check if logged in, else redirect to login
     if option == 'all':
-        post_form = forms.PostForm()
         posts = models.Post.objects.all().order_by('-created_at')
-        return render(request, "network/posts.html", context={
-            'posts': posts,
-            'post_form': post_form,
-            'option': option
-        })
-
+        return JsonResponse([post.serialize() for post in posts], safe=False, status=200)
     if option == 'following':
         following = models.User.objects.filter(follower__exact=request.user)
         posts = models.Post.objects.filter(author__in=following).order_by('-created_at')
-        return render(request, "network/posts.html", context={
-            'posts': posts,
-            'option': option
-        })
-    
-    return HttpResponseRedirect(reverse('login'))
+        return JsonResponse([post.serialize() for post in posts], safe=False, status=200)
+
+    return JsonResponse({'message': 'Error: wrong url.'}, status=400)
 
 
 def login_view(request):
@@ -89,17 +83,6 @@ def register(request):
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "network/register.html")
-
-
-"""def following(request):
-    if request.user.is_authenticated:
-        following = models.User.objects.filter(follower__exact=request.user)
-        posts = models.Post.objects.filter(author__in=following).order_by('-created_at')
-        return render(request, template_name='network/following.html', context={
-            'posts': posts
-        })
-    else:
-        return HttpResponseRedirect(reverse('login'))"""
 
 
 @login_required(login_url='login')
