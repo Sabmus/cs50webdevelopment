@@ -11,6 +11,13 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    document.querySelectorAll(".bi-suit-heart-fill").forEach(heart => {
+        heart.addEventListener('click', event => {
+            const element = event.target;
+            
+        });
+    });
+
 });
 
 /*

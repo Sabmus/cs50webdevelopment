@@ -1,4 +1,4 @@
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, User
 from django.db.models.signals import m2m_changed
 from django.core.exceptions import ValidationError
 from django.dispatch import receiver
@@ -16,6 +16,9 @@ A user can:
 """
 class User(AbstractUser):
     follower = models.ManyToManyField("self", symmetrical=False)
+
+    def following(self):
+        return User.objects.filter(follower__exact=self).count()
 
 
 @receiver(m2m_changed, sender=User.follower.through)

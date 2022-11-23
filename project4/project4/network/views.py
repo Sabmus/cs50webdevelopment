@@ -123,7 +123,7 @@ def create_post(request):
     post.author = request.user
     post.save()
 
-    return HttpResponseRedirect(reverse('index'))
+    return HttpResponseRedirect(reverse('posts', kwargs={'option':'all'}))
 
 
 @login_required(login_url='login')
@@ -132,8 +132,16 @@ def edit_post(request, post_id):
 
 
 @login_required(login_url='login')
-def profile(request):
-    return HttpResponse(request)
+def profile(request, username):
+    profile_user = models.User.objects.get(username=username)
+    posts = models.Post.objects.filter(author__exact=profile_user)
+
+    return render(request, template_name='network/profile.html', context={
+        'can_follow': request.user != profile_user,  # return False is the logged user is different than the profile user
+        'follower': profile_user.follower.count(),
+        'following': profile_user.following(),
+        'posts': posts
+    })
 
 
 @login_required(login_url='login')

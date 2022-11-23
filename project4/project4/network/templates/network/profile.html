@@ -1,0 +1,20 @@
+{% extends "network/layout.html" %}
+
+{% block body %}
+    <div class="general">
+
+        {% if can_follow %}
+            <a href="#">Follow?</a>
+        {% endif %}
+        <hr>
+
+        {{ follower }}
+        {{ following }}
+
+        <div id="posts">
+            {% for post in posts %}
+                <p>{{ post }}</p>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
