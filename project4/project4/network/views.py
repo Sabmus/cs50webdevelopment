@@ -75,21 +75,20 @@ def register(request):
 
 @login_required(login_url='login')
 def posts(request, option):
-    if request.method == 'GET':
-        if option == 'all':
-            posts = models.Post.objects.all().order_by('-created_at')
-            
-            paginator = Paginator(posts, 2)  # show 10 post per page
-            page_number = request.GET.get('page')
-            page_obj = paginator.get_page(page_number)
+    if option == 'all':
+        posts = models.Post.objects.all().order_by('-created_at')
+        
+        paginator = Paginator(posts, 2)  # show 10 post per page
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
 
-            return JsonResponse([post.serialize() for post in page_obj], safe=False, status=200)
-        if option == 'following':
-            following = models.User.objects.filter(follower__exact=request.user)
-            posts = models.Post.objects.filter(author__in=following).order_by('-created_at')
-            return JsonResponse([post.serialize() for post in posts], safe=False, status=200)
+        return JsonResponse([post.serialize() for post in page_obj], safe=False, status=200)
+    if option == 'following':
+        following = models.User.objects.filter(follower__exact=request.user)
+        posts = models.Post.objects.filter(author__in=following).order_by('-created_at')
+        return JsonResponse([post.serialize() for post in posts], safe=False, status=200)
 
-    return JsonResponse({'message': 'required GET method.'}, status=400)
+    return JsonResponse({'message': 'Error: url not found.'}, status=400)
 
 
 @login_required(login_url='login')
