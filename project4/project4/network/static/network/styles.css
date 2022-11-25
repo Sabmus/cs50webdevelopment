@@ -13,8 +13,22 @@
 .separator {
     margin: 5px auto;
 }
-#new_post {
-    margin: 10px 0 10px 0;
+.general {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+#pagination_div {
+    display: flex;
+    justify-content: center;
+}
+#nav_pages {
+    margin: 0;
+    padding: 0;
+}
+.pagination {
+    margin-top: 20px;
+    margin-bottom: 0;
 }
 #new_post_form {
     overflow: hidden;

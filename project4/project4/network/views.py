@@ -73,16 +73,40 @@ def register(request):
         return render(request, "network/register.html")
 
 
-@login_required(login_url='login')
+##@login_required(login_url='login')
 def posts(request, option):
     if option == 'all':
         posts = models.Post.objects.all().order_by('-created_at')
-        
+
+        page_number = request.GET.get('page', 1)
         paginator = Paginator(posts, 2)  # show 10 post per page
-        page_number = request.GET.get('page')
         page_obj = paginator.get_page(page_number)
 
-        return JsonResponse([post.serialize() for post in page_obj], safe=False, status=200)
+        # page_obj.has_other_pages()
+        num_pages = paginator.num_pages
+        has_next = page_obj.has_next()
+        has_previous = page_obj.has_previous()
+        next_page = None
+        previous_page = None
+
+        if has_next:
+            next_page = page_obj.next_page_number()
+        if has_previous:
+            previous_page = page_obj.previous_page_number()
+
+        posts_list = [post.serialize() for post in page_obj.object_list]
+
+        posts_dict = {
+            'current_page': page_obj.number,
+            'num_pages': num_pages,
+            'has_next': has_next,
+            'has_previous': has_previous,
+            'next_page': next_page,
+            'previous_page': previous_page,
+            'posts_list': posts_list
+        }
+
+        return JsonResponse(posts_dict, status=200)
     if option == 'following':
         following = models.User.objects.filter(follower__exact=request.user)
         posts = models.Post.objects.filter(author__in=following).order_by('-created_at')

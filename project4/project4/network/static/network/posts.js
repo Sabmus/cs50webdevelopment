@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // TODO
 
     const posts = document.querySelector("#posts");
+    const pagiation_div = document.querySelector("#pagination_div");
 
     // fetch post data
     fetch('posts/all')
@@ -15,7 +16,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     })
     .then(json => {
-        json.forEach(element => {
+        // data
+        json["posts_list"].forEach(element => {
             let post_div = document.createElement('div');
             post_div.setAttribute('class', 'post_div');
 
@@ -84,6 +86,60 @@ document.addEventListener('DOMContentLoaded', () => {
             posts.appendChild(post_div);
 
         });
+
+        
+        /** PAGINATION */
+        // base element, "nav" and "ul"
+        let nav = document.createElement("nav");
+        nav.setAttribute("id", "nav_pages");
+        let ul = document.createElement("ul");
+        ul.setAttribute("class", "pagination");
+
+        nav.appendChild(ul);
+        
+        // previous arrow
+        let li_previous = document.createElement("li");
+        if (json["has_previous"]) {
+            li_previous.setAttribute("class", "page-item");
+        } else {
+            li_previous.setAttribute("class", "page-item disabled");
+        }
+        li_previous.innerHTML = `<a class="page-link" href="?page=${json["current_page"] - 1}" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>`;
+        
+        // next arrow
+        let li_next = document.createElement("li");
+        if (json["has_next"]) {
+            li_next.setAttribute("class", "page-item");
+        } else {
+            li_next.setAttribute("class", "page-item disabled");
+        }
+        li_next.innerHTML = `<a class="page-link" href="?page=${json["current_page"] + 1}" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>`;
+        
+        ul.appendChild(li_previous);
+
+        // inside pages
+        if (json["num_pages"] < 3) {
+            for (let page = json["current_page"]; page <= json["num_pages"]; page++) {
+                let li_inside = document.createElement("li");
+                li_inside.setAttribute("class", "page-item");
+                li_inside.innerHTML = `<a class="page-link" href="?page=${page}">${page}</a>`;
+                ul.appendChild(li_inside);
+            }
+        } else {
+            let max_loop = json["current_page"] + 2;
+            for (let page = json["current_page"]; page <= max_loop; page++) {
+                let li_inside = document.createElement("li");
+                li_inside.setAttribute("class", "page-item");
+                li_inside.innerHTML = `<a class="page-link" href="?page=${page}">${page}</a>`;
+                ul.appendChild(li_inside);
+            }
+        }
+
+        ul.appendChild(li_next);
+
+        pagiation_div.appendChild(nav);
+        
+
     })
     .catch(error => console.log(error));
 
