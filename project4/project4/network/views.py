@@ -2,11 +2,13 @@
 # https://docs.djangoproject.com/en/4.1/ref/request-response/#jsonresponse-objects
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import ensure_csrf_cookie
 from django.core.paginator import Paginator
 from django.db import IntegrityError
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
+import json
 
 from . import models
 from . import forms
@@ -92,6 +94,7 @@ def profile(request, username):
 
 
 ##@login_required(login_url='login')
+@ensure_csrf_cookie
 def posts(request, option):
     logged_in = request.user.is_authenticated
 
@@ -134,6 +137,7 @@ def posts(request, option):
     posts_list = [post.serialize() for post in page_obj.object_list]
 
     posts_dict = {
+        'user': request.user.username,
         'option': option,
         'current_page': page_obj.number,
         'num_pages': num_pages,
@@ -172,9 +176,25 @@ def create_post(request):
 
 
 @login_required(login_url='login')
+@ensure_csrf_cookie
 def edit_post(request, post_id):
-    pass
+    if request.method != 'POST':
+        return JsonResponse({'message': 'must be post request.'})
 
+    try:
+        post = models.Post.objects.get(id=post_id)
+        content = json.loads(request.body)
+    except models.Post.DoesNotExist as error:
+        return JsonResponse({'message': 'Post not found.'}, status=500)
+
+    if post.author != request.user:
+        return JsonResponse({'message': 'You cannot do that!.'}, status=400)
+
+    post.content = content
+    post.save(update_fields=["content"])
+
+    return JsonResponse({'content': content}, status=200)
+    
 
 @login_required(login_url='login')
 def liked_post(request, post_id):

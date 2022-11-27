@@ -24,22 +24,22 @@ function get_data(page_number, option, username=null) {
     .then(json => {
         // data
         // console.log(json);
-        json["posts_list"].forEach(element => {
+        json["posts_list"].forEach(post => {
             let post_div = document.createElement('div');
             post_div.setAttribute('class', 'post_div');
 
             let author_link = document.createElement('a');
             author_link.setAttribute('class', 'post_author');
-            author_link.setAttribute('href', `profile/${element.author}`);
-            author_link.innerText = element.author;
+            author_link.setAttribute('href', `profile/${post.author}`);
+            author_link.innerText = post.author;
 
-            let ptag_content = document.createElement('p');
-            ptag_content.setAttribute('class', 'ptag_post');
-            ptag_content.innerText = element.content;
+            let article_post = document.createElement('article');
+            article_post.setAttribute('class', 'article_post');
+            article_post.innerText = post.content;
 
             let ptag_datetime = document.createElement('p');
             ptag_datetime.setAttribute('class', 'ptag_datetime');
-            ptag_datetime.innerText = element.created_at;
+            ptag_datetime.innerText = post.created_at;
 
             let separator = document.createElement('hr');
             separator.setAttribute('class', 'separator');
@@ -67,27 +67,76 @@ function get_data(page_number, option, username=null) {
             
             let span_tag = document.createElement('span');
             span_tag.setAttribute('class', 'likes');
-            span_tag.textContent = element.like_count;
+            span_tag.textContent = post.like_count;
 
-            let reply_div = document.createElement('div');
-            reply_div.innerHTML = '<a href="#">Reply</a>';
+            let action_div = document.createElement("div");
+            action_div.setAttribute('class', 'action_div'); 
+
+            let anchor_edit = document.createElement("a");
+            anchor_edit.setAttribute("class", "edit-post");
+            anchor_edit.setAttribute("href", "#");
+            anchor_edit.innerText = 'Edit';
+            let anchor_reply = document.createElement("a");
+            anchor_reply.setAttribute("href", "#");
+            anchor_reply.innerText = 'Reply';
+            
+            if (post.author === json.user) action_div.appendChild(anchor_edit);
+            action_div.appendChild(anchor_reply);
 
 
             post_div.appendChild(author_link);
-            post_div.appendChild(ptag_content);
+            post_div.appendChild(article_post);
             post_div.appendChild(ptag_datetime);
             post_div.appendChild(separator);
             post_div.appendChild(footer_div);
             footer_div.appendChild(like_div);
             like_div.appendChild(svg_image);
             like_div.appendChild(span_tag);
-            footer_div.appendChild(reply_div);
+            footer_div.appendChild(action_div);
 
 
             // eventListener to like a post
             svg_image.addEventListener('click', () => {
                 let lastChild = like_div.lastElementChild;
-                like_a_post(lastChild, element.id);
+                like_a_post(lastChild, post.id);
+            });
+
+            // eventListener to edit a post
+            anchor_edit.addEventListener('click', event => {
+                event.preventDefault();
+   
+                let textarea_edit = document.createElement('textarea');
+                textarea_edit.setAttribute("class", "form-control");
+                textarea_edit.setAttribute("name", "content");
+                textarea_edit.setAttribute("required", "");
+                textarea_edit.innerText = post.content;
+
+                let anchor_save = document.createElement("a");
+                anchor_save.setAttribute("href", "#");
+                anchor_save.innerText = "Save";
+                anchor_save.addEventListener('click', event => {
+                    event.preventDefault();       
+                    update_post(post.id, textarea_edit.value);
+                    
+                    article_post.innerText = textarea_edit.value;
+                    textarea_edit.replaceWith(article_post);
+                    anchor_cancel.replaceWith(anchor_edit);
+                    anchor_save.remove();
+                });
+                
+                let anchor_cancel = document.createElement("a");
+                anchor_cancel.setAttribute("href", "#");
+                anchor_cancel.innerText = 'Cancel';
+                anchor_cancel.addEventListener("click", event => {
+                    event.preventDefault();
+                    textarea_edit.replaceWith(article_post);
+                    anchor_cancel.replaceWith(anchor_edit);
+                    anchor_save.remove();
+                });
+
+                article_post.replaceWith(textarea_edit);
+                anchor_edit.replaceWith(anchor_save, anchor_cancel);
+
             });
             
             posts.appendChild(post_div);
@@ -100,7 +149,6 @@ function get_data(page_number, option, username=null) {
     })
     .catch(error => console.log(error));
 }
-
 
 function pagination(json) {
     const pagiation_div = document.querySelector("#pagination_div");
@@ -207,7 +255,6 @@ function pagination(json) {
     pagiation_div.appendChild(nav);
 }
 
-
 function like_a_post(last_child, post_id) {
     // console.log(last_child);
 
@@ -225,8 +272,6 @@ function like_a_post(last_child, post_id) {
     })
     .catch(error => console.log(error));
 }
-
-
 
 function follow(username) {
     const follower = document.querySelector("#followers");
@@ -250,4 +295,53 @@ function follow(username) {
         }
     })
     .catch(error => console.log(error));
+}
+
+function update_post(post_id, content) {
+    /** doc
+     * https://docs.djangoproject.com/en/4.1/howto/csrf/#using-csrf-protection-with-ajax
+     */
+    const csrftoken = getCookie('csrftoken');
+    // console.log(csrftoken);
+
+    const request = new Request(
+        `/edit_post/${post_id}`,
+        {
+            method: 'POST',
+            headers: {'X-CSRFToken': csrftoken},
+            mode: 'same-origin', // Do not send CSRF token to another domain.
+            body: JSON.stringify(content)
+        }
+    );
+
+    fetch(request)
+    .then(response => {
+        if (response.ok) {
+            return response.json();
+        } else {
+            throw new Error(response.status);
+        }
+    })
+    .then(json => {
+        console.log(json);
+        
+    })
+    .catch(error => console.log(error));
+}
+
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
 }
