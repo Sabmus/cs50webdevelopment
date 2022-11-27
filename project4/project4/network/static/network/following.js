@@ -6,6 +6,6 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // fetch post data
     // by default, load first page
-    get_data(1, "all");
+    get_data(1, "following");
 
 });

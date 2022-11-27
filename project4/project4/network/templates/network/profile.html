@@ -1,4 +1,10 @@
 {% extends "network/layout.html" %}
+{% load static %}
+
+{% block script %} 
+    <script src="{% static 'network/post_data.js' %}"></script> 
+    <script src="{% static 'network/profile.js' %}"></script> 
+{% endblock script %}
 
 {% block body %}
     <div class="general">
@@ -12,9 +18,9 @@
         {{ following }}
 
         <div id="posts">
-            {% for post in posts %}
-                <p>{{ post }}</p>
-            {% endfor %}
+        </div>
+        
+        <div id="pagination_div">
         </div>
     </div>
 {% endblock %}

@@ -21,6 +21,22 @@ def all_posts(request):
     return render(request, template_name='network/posts.html', context={})
 
 
+@login_required(login_url='login')
+def following(request):
+    return render(request, template_name='network/following.html', context={})
+
+
+@login_required(login_url='login')
+def profile(request, username):
+    profile_user = models.User.objects.get(username=username)
+
+    return render(request, template_name='network/profile.html', context={
+        'can_follow': request.user != profile_user,  # return False is the logged user is different than the profile user
+        'follower': profile_user.follower.count(),
+        'following': profile_user.following(),
+    })
+
+
 def login_view(request):
     if request.method == "POST":
 
@@ -32,7 +48,7 @@ def login_view(request):
         # Check if authentication successful
         if user is not None:
             login(request, user)
-            return HttpResponseRedirect(reverse("index"))
+            return HttpResponseRedirect(reverse("all_posts"))
         else:
             return render(request, "network/login.html", {
                 "message": "Invalid username and/or password."
@@ -75,44 +91,56 @@ def register(request):
 
 ##@login_required(login_url='login')
 def posts(request, option):
+    logged_in = request.user.is_authenticated
+
+    if option not in ('all', 'following', 'profile'):
+        return JsonResponse({'message': 'Error: wrong url option.'}, status=400)
+    
+    if not logged_in and option in ('following', 'profile'):
+        return JsonResponse({'message': 'User must be logged in.'}, status=400)
+
+
     if option == 'all':
         posts = models.Post.objects.all().order_by('-created_at')
-
-        page_number = request.GET.get('page', 1)
-        paginator = Paginator(posts, 2)  # show 10 post per page
-        page_obj = paginator.get_page(page_number)
-
-        # page_obj.has_other_pages()
-        num_pages = paginator.num_pages
-        has_next = page_obj.has_next()
-        has_previous = page_obj.has_previous()
-        next_page = None
-        previous_page = None
-
-        if has_next:
-            next_page = page_obj.next_page_number()
-        if has_previous:
-            previous_page = page_obj.previous_page_number()
-
-        posts_list = [post.serialize() for post in page_obj.object_list]
-
-        posts_dict = {
-            'current_page': page_obj.number,
-            'num_pages': num_pages,
-            'has_next': has_next,
-            'has_previous': has_previous,
-            'next_page': next_page,
-            'previous_page': previous_page,
-            'posts_list': posts_list
-        }
-
-        return JsonResponse(posts_dict, status=200)
+        
     if option == 'following':
         following = models.User.objects.filter(follower__exact=request.user)
         posts = models.Post.objects.filter(author__in=following).order_by('-created_at')
-        return JsonResponse([post.serialize() for post in posts], safe=False, status=200)
 
-    return JsonResponse({'message': 'Error: url not found.'}, status=400)
+    if option == 'profile':
+        posts = models.Post.objects.filter(author__exact=request.user).order_by('-created_at')
+
+
+    page_number = request.GET.get('page', 1)  # default: page 1
+    paginator = Paginator(posts, 10)  # show 10 post per page
+    page_obj = paginator.get_page(page_number)
+
+    # page_obj.has_other_pages()
+    num_pages = paginator.num_pages
+    has_next = page_obj.has_next()
+    has_previous = page_obj.has_previous()
+    next_page = None
+    previous_page = None
+
+    if has_next:
+        next_page = page_obj.next_page_number()
+    if has_previous:
+        previous_page = page_obj.previous_page_number()
+
+    posts_list = [post.serialize() for post in page_obj.object_list]
+
+    posts_dict = {
+        'option': option,
+        'current_page': page_obj.number,
+        'num_pages': num_pages,
+        'has_next': has_next,
+        'has_previous': has_previous,
+        'next_page': next_page,
+        'previous_page': previous_page,
+        'posts_list': posts_list
+    }
+
+    return JsonResponse(posts_dict, status=200)
 
 
 @login_required(login_url='login')
@@ -142,19 +170,6 @@ def create_post(request):
 @login_required(login_url='login')
 def edit_post(request, post_id):
     pass
-
-
-@login_required(login_url='login')
-def profile(request, username):
-    profile_user = models.User.objects.get(username=username)
-    posts = models.Post.objects.filter(author__exact=profile_user)
-
-    return render(request, template_name='network/profile.html', context={
-        'can_follow': request.user != profile_user,  # return False is the logged user is different than the profile user
-        'follower': profile_user.follower.count(),
-        'following': profile_user.following(),
-        'posts': posts
-    })
 
 
 @login_required(login_url='login')
