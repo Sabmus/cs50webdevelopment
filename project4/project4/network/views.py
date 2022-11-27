@@ -17,26 +17,6 @@ def index(request):
     return render(request, template_name='network/index.html', context={})
 
 
-def all_posts(request):
-    return render(request, template_name='network/posts.html', context={})
-
-
-@login_required(login_url='login')
-def following(request):
-    return render(request, template_name='network/following.html', context={})
-
-
-@login_required(login_url='login')
-def profile(request, username):
-    profile_user = models.User.objects.get(username=username)
-
-    return render(request, template_name='network/profile.html', context={
-        'can_follow': request.user != profile_user,  # return False is the logged user is different than the profile user
-        'follower': profile_user.follower.count(),
-        'following': profile_user.following(),
-    })
-
-
 def login_view(request):
     if request.method == "POST":
 
@@ -89,6 +69,28 @@ def register(request):
         return render(request, "network/register.html")
 
 
+def all_posts(request):
+    return render(request, template_name='network/posts.html', context={})
+
+
+@login_required(login_url='login')
+def following(request):
+    return render(request, template_name='network/following.html', context={})
+
+
+@login_required(login_url='login')
+def profile(request, username):
+    profile_user = models.User.objects.get(username=username)
+
+    return render(request, template_name='network/profile.html', context={
+        'username': profile_user.username,
+        'can_follow': request.user != profile_user,  # return False is the logged user is different than the profile user
+        'follower': profile_user.follower.count(),
+        'following': profile_user.following(),
+        'is_follower': request.user.is_follower(username)
+    })
+
+
 ##@login_required(login_url='login')
 def posts(request, option):
     logged_in = request.user.is_authenticated
@@ -108,7 +110,9 @@ def posts(request, option):
         posts = models.Post.objects.filter(author__in=following).order_by('-created_at')
 
     if option == 'profile':
-        posts = models.Post.objects.filter(author__exact=request.user).order_by('-created_at')
+        username = request.GET.get('username')
+        author = models.User.objects.get(username=username)
+        posts = models.Post.objects.filter(author__exact=author).order_by('-created_at')
 
 
     page_number = request.GET.get('page', 1)  # default: page 1
@@ -176,7 +180,7 @@ def edit_post(request, post_id):
 def liked_post(request, post_id):
     try:
         post = models.Post.objects.get(pk=post_id)
-    except models.Post.IntegrityError as error:
+    except models.Post.DoesNotExist as error:
         return JsonResponse({'message': error}, status=500)
 
     # if user not liked the post add to liked list, else remove it
@@ -186,3 +190,24 @@ def liked_post(request, post_id):
     else:
         post.liked_by.remove(request.user)
         return JsonResponse({'message': 'post not liked!', 'likes': post.like_count}, status=200)
+
+
+@login_required(login_url='login')
+def follow(request, username):
+    try:
+        profile_user = models.User.objects.get(username__exact=username)
+    except models.User.DoesNotExist as error:
+        return JsonResponse({'message': error}, status=500)
+
+    # if user is not following, then follow, elese unfollow
+    if request.user not in profile_user.follower.all():
+        profile_user.follower.add(request.user)
+    else:
+        profile_user.follower.remove(request.user)
+
+    follow_data = {
+        'follower': profile_user.follower.count(),
+        'is_follower': request.user.is_follower(username)
+    }
+    return JsonResponse(follow_data, status=200)
+    

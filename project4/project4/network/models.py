@@ -20,6 +20,11 @@ class User(AbstractUser):
     def following(self):
         return User.objects.filter(follower__exact=self).count()
 
+    def is_follower(self, username):
+        if self in User.objects.get(username=username).follower.all():
+            return True
+        return False
+
 
 @receiver(m2m_changed, sender=User.follower.through)
 def m2m_changed_follower(sender, instance, action, pk_set, *args, **kwargs):

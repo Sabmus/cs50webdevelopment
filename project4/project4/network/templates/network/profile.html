@@ -8,15 +8,31 @@
 
 {% block body %}
     <div class="general">
+        <div id="profile_data">
+            <div id="username_div">
+                <span id="username">{{ username }}</span>'s profile
+            </div>
 
-        {% if can_follow %}
-            <a href="#">Follow?</a>
-        {% endif %}
-        <hr>
+            <div id="follows">
+                <div id="followers">{{ follower }}</div>
+                <span>followers</span>
+            </div>
+            
+            <div id="follows">
+                {{ following }}
+                <span>following</span>    
+            </div>
+            
+            {% if can_follow and not is_follower %}
+                <a id="anchor_follow" href="">Follow?</a>
+            {% elif can_follow and is_follower %}
+                <a id="anchor_follow" href="">Unfollow?</a>
+            {% endif %}
+        </div>
 
-        {{ follower }}
-        {{ following }}
-
+        <div style="margin-bottom: 20px;"><hr></div>
+        
+        
         <div id="posts">
         </div>
         

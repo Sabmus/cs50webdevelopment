@@ -1,12 +1,19 @@
 
-function get_data(page_number, option) {
+function get_data(page_number, option, username=null) {
     // clear divs
+    
     const posts = document.querySelector("#posts");
     posts.innerHTML = "";
     const pagiation_div = document.querySelector("#pagination_div");
     pagiation_div.innerHTML = "";
 
-    fetch(`/posts/${option}?page=${page_number}`)
+    if (username === null) {
+        fetch_url = `/posts/${option}?page=${page_number}`
+    } else {
+        fetch_url = `/posts/${option}?username=${username}&page=${page_number}`
+    }
+    
+    fetch(fetch_url)
     .then(response => {
         if (response.ok) {
             return response.json();
@@ -215,6 +222,32 @@ function like_a_post(last_child, post_id) {
     .then(json => {
         // console.log(json);
         last_child.textContent = json.likes;
+    })
+    .catch(error => console.log(error));
+}
+
+
+
+function follow(username) {
+    const follower = document.querySelector("#followers");
+    const anchor_follow = document.querySelector("#anchor_follow");
+
+    fetch(`/follow/${username}`)
+    .then(response => {
+        if (response.ok) {
+            return response.json();
+        } else {
+            throw new Error(response.status);
+        }
+    })
+    .then(json => {
+        console.log(json);
+        follower.innerHTML = json.follower;
+        if (json.is_follower) {
+            anchor_follow.innerHTML = "Unfollow?";
+        } else {
+            anchor_follow.innerHTML = "Follow?";
+        }
     })
     .catch(error => console.log(error));
 }
