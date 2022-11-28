@@ -109,7 +109,7 @@ function get_data(page_number, option, username=null) {
                 textarea_edit.setAttribute("class", "form-control");
                 textarea_edit.setAttribute("name", "content");
                 textarea_edit.setAttribute("required", "");
-                textarea_edit.innerText = post.content;
+                textarea_edit.innerText = article_post.innerHTML;
 
                 let anchor_save = document.createElement("a");
                 anchor_save.setAttribute("href", "#");
@@ -258,7 +258,7 @@ function pagination(json) {
 function like_a_post(last_child, post_id) {
     // console.log(last_child);
 
-    fetch(`liked_post/${post_id}`)
+    fetch(`/liked_post/${post_id}`)
     .then(response => {
         if (response.ok) {
             return response.json();
