@@ -1,4 +1,4 @@
-"""project_final URL Configuration
+"""budget_project URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/4.1/topics/http/urls/
@@ -19,8 +19,5 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('u', include('user_app.urls')),
-    path('budget', include('budget.urls')),
-    
-    # OAuth2
-    path('o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
+    path('budget', include('budget.urls'))
 ]
