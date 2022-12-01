@@ -8,11 +8,9 @@
 {% endblock style %}
 
 {% block body %}
-    <h1>Login Page</h1>
+    <h1>Budget Page</h1>
 
-    <form action="{% url 'user_app:login_view' %}" method="POST">
-        {% csrf_token %}
-        {{ form }}
-        <input type="submit" value="Send">
-    </form>
+    {% if user.is_authenticated %}
+        {{ user }}
+    {% endif %}
 {% endblock body %}

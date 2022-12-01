@@ -1,16 +1,20 @@
 {% extends 'pages/base.html' %}
 {% load static %}
 
-{% block title %}Log In{% endblock title %}
+{% block title %}Register{% endblock title %}
 
 {% block style %}
     <link href="{% static 'pages/styles.css' %}" rel="stylesheet">
 {% endblock style %}
 
 {% block body %}
-    <h1>Login Page</h1>
+    <h1>Register Page</h1>
 
-    <form action="{% url 'user_app:login_view' %}" method="POST">
+    {% if message %}
+        {{ message }}
+    {% endif %}
+
+    <form action="{% url 'user_app:register' %}" method="POST">
         {% csrf_token %}
         {{ form }}
         <input type="submit" value="Send">
