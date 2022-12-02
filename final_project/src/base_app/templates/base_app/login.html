@@ -1,16 +1,16 @@
-{% extends 'pages/base.html' %}
+{% extends 'base_app/base.html' %}
 {% load static %}
 
 {% block title %}Log In{% endblock title %}
 
 {% block style %}
-    <link href="{% static 'pages/styles.css' %}" rel="stylesheet">
+    <link href="{% static 'base_app/styles.css' %}" rel="stylesheet">
 {% endblock style %}
 
 {% block body %}
     <h1>Login Page</h1>
 
-    <form action="{% url 'user_app:login_view' %}" method="POST">
+    <form action="{% url 'base_app:login' %}" method="POST">
         {% csrf_token %}
         {{ form }}
         <input type="submit" value="Send">

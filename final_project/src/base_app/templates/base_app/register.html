@@ -1,10 +1,10 @@
-{% extends 'pages/base.html' %}
+{% extends 'base_app/base.html' %}
 {% load static %}
 
 {% block title %}Register{% endblock title %}
 
 {% block style %}
-    <link href="{% static 'pages/styles.css' %}" rel="stylesheet">
+    <link href="{% static 'base_app/styles.css' %}" rel="stylesheet">
 {% endblock style %}
 
 {% block body %}
@@ -14,7 +14,7 @@
         {{ message }}
     {% endif %}
 
-    <form action="{% url 'user_app:register' %}" method="POST">
+    <form action="{% url 'base_app:register' %}" method="POST">
         {% csrf_token %}
         {{ form }}
         <input type="submit" value="Send">

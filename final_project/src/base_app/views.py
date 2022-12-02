@@ -1,20 +1,26 @@
 from django.shortcuts import render
-from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.forms import AuthenticationForm
-from django.http import HttpResponseRedirect, JsonResponse
 from django.urls import reverse
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.password_validation import validate_password
 from django.db import IntegrityError
 from django.core.exceptions import ValidationError
-from django.contrib.auth.password_validation import validate_password
+from django.http import HttpResponseRedirect
+from django.contrib.auth.forms import AuthenticationForm
 
-from . import forms
 from . import models
+from . import forms
+
+
+def index(request):
+    return render(request, template_name='base_app/index.html', context={})
 
 
 def register(request):
+    template_name = 'base_app/register.html'
+
     if request.method != 'POST':
         form = forms.CreateUserForm()
-        return render(request, template_name='user_app/register.html', context={
+        return render(request, template_name=template_name, context={
             'form': form
         })
 
@@ -22,8 +28,9 @@ def register(request):
     password = request.POST["password"]
     password_check = request.POST["password_check"]
 
+    # check if password match
     if password != password_check:
-        return render(request, template_name='user_app/register.html', context={
+        return render(request, template_name=template_name, context={
             'form': form,
             'message': 'Password must match.'
         })
@@ -31,10 +38,11 @@ def register(request):
         try:
             validate_password(password)
         except ValidationError as ve:
-            return render(request, template_name='user_app/register.html', context={
+            return render(request, template_name=template_name, context={
                 'form': form,
                 'message': ve
             })
+
 
     if form.is_valid():
         username = form.cleaned_data["username"]
@@ -44,20 +52,19 @@ def register(request):
         try:
             user = models.User.objects.create_user(username=username, password=password, email=email)
             user.save()
-        except IntegrityError:
-            return render(request, template_name='user_app/register.html', context={
+        except IntegrityError as error:
+            return render(request, template_name=template_name, context={
                 'form': form,
-                'message': 'An error has ocurred'
+                'message': error
             })
 
         login(request, user)
-        return HttpResponseRedirect(reverse('pages:budget'))
+        return HttpResponseRedirect(reverse('base_app:index'))
     else:
-        return render(request, template_name='user_app/register.html', context={
+        return render(request, template_name=template_name, context={
             'form': form,
             'message': form.errors
         })
-
 
 
 def login_view(request):
@@ -67,22 +74,22 @@ def login_view(request):
             user = authenticate(request, **form.cleaned_data)
             if user is not None:
                 login(request, user)
-                return HttpResponseRedirect(reverse('pages:budget'))
+                return HttpResponseRedirect(reverse('base_app:index'))
             else:
-                return render(request, template_name='user_app/login.html', context={
+                return render(request, template_name='base_app/login.html', context={
                     'form': form
                 })
         else:
-            return render(request, template_name='user_app/login.html', context={
+            return render(request, template_name='base_app/login.html', context={
                     'form': form
                 })
     else:
         form = AuthenticationForm()
-        return render(request, template_name='user_app/login.html', context={
+        return render(request, template_name='base_app/login.html', context={
             'form': form
         })
 
 
 def logout_view(request):
     logout(request)
-    return HttpResponseRedirect(reverse('user_app:login_view'))
+    return HttpResponseRedirect(reverse('base_app:login'))
