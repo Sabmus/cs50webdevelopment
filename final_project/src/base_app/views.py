@@ -6,9 +6,11 @@ from django.db import IntegrityError
 from django.core.exceptions import ValidationError
 from django.http import HttpResponseRedirect
 from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.decorators import login_required
 
 from . import models
 from . import forms
+
 
 
 def index(request):
@@ -75,14 +77,10 @@ def login_view(request):
             if user is not None:
                 login(request, user)
                 return HttpResponseRedirect(reverse('base_app:index'))
-            else:
-                return render(request, template_name='base_app/login.html', context={
-                    'form': form
-                })
-        else:
-            return render(request, template_name='base_app/login.html', context={
-                    'form': form
-                })
+
+        return render(request, template_name='base_app/login.html', context={
+                'form': form
+            })
     else:
         form = AuthenticationForm()
         return render(request, template_name='base_app/login.html', context={

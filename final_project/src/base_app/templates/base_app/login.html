@@ -1,11 +1,6 @@
 {% extends 'base_app/base.html' %}
-{% load static %}
 
 {% block title %}Log In{% endblock title %}
-
-{% block style %}
-    <link href="{% static 'base_app/styles.css' %}" rel="stylesheet">
-{% endblock style %}
 
 {% block body %}
     <h1>Login Page</h1>
@@ -15,4 +10,6 @@
         {{ form }}
         <input type="submit" value="Send">
     </form>
+
+    <a href="{% url 'base_app:register' %}">Don't have an account?</a>
 {% endblock body %}
