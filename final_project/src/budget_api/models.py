@@ -14,6 +14,14 @@ class Money(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
 
+class Currency(models.Model):
+    name = models.CharField(max_length=50)
+    currency_code = models.CharField(max_length=3)
+
+    def __str__(self):
+        return f"{self.name} ({self.currency_code})"
+
+
 class IncomeChoice(models.Model):
     name = models.CharField(max_length=50)
 
@@ -23,9 +31,10 @@ class IncomeChoice(models.Model):
 
 class Income(Money):
     choices = models.ForeignKey(IncomeChoice, verbose_name=_("Income choices"), on_delete=models.CASCADE)
+    currency = models.ForeignKey(Currency, verbose_name=_("Income currency"), on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"{self.choices.name} of {super().person.username}"
+        return f"{self.choices.name}: ${self.amount} {self.currency.currency_code}"
 
 
 class Saving(Money):

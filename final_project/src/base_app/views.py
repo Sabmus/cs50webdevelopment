@@ -12,9 +12,13 @@ from . import models
 from . import forms
 
 
-
 def index(request):
-    return render(request, template_name='base_app/index.html', context={})
+    user = models.User.objects.get(username=request.user)
+
+    return render(request, template_name='base_app/index.html', context={
+        'total_income': user.get_incomes(),
+        'incomes': user.income_set.all()
+    })
 
 
 def register(request):
@@ -91,3 +95,9 @@ def login_view(request):
 def logout_view(request):
     logout(request)
     return HttpResponseRedirect(reverse('base_app:login'))
+
+
+def add_income(request):
+    return render(request, template_name='base_app/budget/add_income.html', context={
+        'form': forms.AddIncomeForm()
+    })

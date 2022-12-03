@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     #
     'base_app',
     'budget_api',
+    'django.contrib.humanize',
 ]
 
 MIDDLEWARE = [
@@ -128,3 +129,4 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # aditional conf
 AUTH_USER_MODEL = "base_app.User"
 LOGIN_URL = "base_app:login"
+# USE_THOUSAND_SEPARATOR = True

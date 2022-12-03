@@ -1,16 +1,16 @@
 from django.contrib import admin
 
-from .models import (Income, IncomeChoice, Saving, Expense, ExpenseChoice
+from .models import (Currency, Income, IncomeChoice, Saving, Expense, ExpenseChoice
     , TimeChoice, Investment, InvestmentChoice)
 
 
 
 @admin.register(Income)
 class IncomeAdmin(admin.ModelAdmin):
-    fields = ('person', 'choices', 'amount', 'created_at', 'updated_at')
-    list_display = ('person', 'choices', 'created_at')
+    fields = ('person', 'choices', 'amount', 'currency')
+    list_display = ('person', 'choices', 'currency', 'created_at')
 
 
-admin.site.register([IncomeChoice, Saving, Expense, ExpenseChoice
+admin.site.register([Currency, IncomeChoice, Saving, Expense, ExpenseChoice
     , TimeChoice, Investment, InvestmentChoice])
 

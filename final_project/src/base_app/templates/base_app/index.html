@@ -1,4 +1,5 @@
 {% extends 'base_app/base.html' %}
+{% load humanize %}
 
 {% block title %}
     Index
@@ -10,9 +11,18 @@
     {% if user.is_authenticated %}
         <h1>Welcome {{ user }}</h1>
         <a href="{% url 'base_app:logout' %}">Log out</a>
+        <a href="{% url 'base_app:add_income' %}">Add Income</a>
     {% else %}
         <a href="{% url 'base_app:login' %}">Log In</a>
         <a href="{% url 'base_app:register' %}">Register</a>
     {% endif %}
+    <hr>
+    <p>Your income is: {{ total_income|intcomma }}</p>
+
+    <ul>
+    {% for income in incomes %}
+        <li>{{ income }}</li>
+    {% endfor %}
+    </ul>
 
 {% endblock body %}
