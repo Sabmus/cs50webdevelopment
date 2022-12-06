@@ -10,8 +10,11 @@
 
     {% if user.is_authenticated %}
         <h1>Welcome {{ user }}</h1>
-        <a href="{% url 'base_app:logout' %}">Log out</a>
-        <a href="{% url 'base_app:add_income' %}">Add Income</a>
+        <a href="{% url 'base_app:logout' %}">Log out</a> <br>
+        <a href="{% url 'base_app:add_income' %}">Add Income</a> <br>
+        <a href="{% url 'base_app:add_expense' %}">Add Expense</a> <br>
+        <a href="{% url 'base_app:add_income' %}">Add Saving</a> <br>
+        <a href="{% url 'base_app:add_income' %}">Add Investment</a> <br>
     {% else %}
         <a href="{% url 'base_app:login' %}">Log In</a>
         <a href="{% url 'base_app:register' %}">Register</a>

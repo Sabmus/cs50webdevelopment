@@ -14,4 +14,14 @@ class CreateUserForm(forms.Form):
 class AddIncomeForm(ModelForm):
     class Meta:
         model = models.Income
-        fields = ['choices', 'amount','currency']
+        fields = ['choices', 'amount', 'currency']
+
+
+class AddExpenseForm(ModelForm):
+    class Meta:
+        model = models.Expense
+        fields = ['choices', 'name', 'is_subscription', 'time_choice', 'start']
+        widgets = {
+            'start': forms.widgets.DateInput(attrs={'type': 'date'})
+        }
+

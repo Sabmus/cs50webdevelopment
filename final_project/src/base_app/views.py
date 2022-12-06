@@ -101,3 +101,8 @@ def add_income(request):
     return render(request, template_name='base_app/budget/add_income.html', context={
         'form': forms.AddIncomeForm()
     })
+
+def add_expense(request):
+    return render(request, template_name='base_app/budget/add_expense.html', context={
+        'form': forms.AddExpenseForm()
+    })
