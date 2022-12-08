@@ -61,6 +61,7 @@ class TimeChoice(models.Model):
 
 class Expense(Money):
     choices = models.ForeignKey(ExpenseChoice, verbose_name=_("Expense Choice"), on_delete=models.CASCADE)
+    currency = models.ForeignKey(Currency, verbose_name=_("Expense currency"), on_delete=models.CASCADE)
     name = models.CharField(max_length=50)
     is_subscription = models.BooleanField(default=False)  # means that the amount is charged every month without end
     time_choice = models.ForeignKey(TimeChoice, on_delete=models.CASCADE, null=True, blank=True)

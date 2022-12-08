@@ -20,7 +20,7 @@ class AddIncomeForm(ModelForm):
 class AddExpenseForm(ModelForm):
     class Meta:
         model = models.Expense
-        fields = ['choices', 'name', 'is_subscription', 'time_choice', 'start']
+        fields = ['choices', 'name', 'amount', 'is_subscription', 'time_choice', 'start']
         widgets = {
             'start': forms.widgets.DateInput(attrs={'type': 'date'})
         }

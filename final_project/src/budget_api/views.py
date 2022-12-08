@@ -32,4 +32,17 @@ def add_income(request):
     
 
 def add_expense(request):
-    pass
+    if request.method != 'POST':
+        return JsonResponse({'message': 'Post request required.'}, status=403)
+
+    body = json.loads(request.body)
+    form_dict = {
+        'choices': int(body['choices']),
+        'name': body['name'],
+        'is_subscription': int(body['is_subscription']),
+        'amount': int(body['amount']),
+        'time_choice': int(body['time_choice']),
+        'currency': int(body['choices']),
+        'start': int(body['choices']),
+    }
+
