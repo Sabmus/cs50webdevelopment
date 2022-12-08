@@ -3,7 +3,7 @@ from django.http import JsonResponse
 import json
 
 from . import models
-from base_app import forms
+from budget_api import forms
 
 
 def add_income(request):
@@ -21,9 +21,7 @@ def add_income(request):
     if form.is_valid():
         income = models.Income.objects.create(
             person = request.user,
-            amount = int(form.cleaned_data['amount']),
-            choices_id = form_dict['choices'],
-            currency_id = form_dict['currency']
+            **form.cleaned_data
         )
         income.save()
         return JsonResponse({'message': 'form valid'}, status=200)
@@ -36,13 +34,85 @@ def add_expense(request):
         return JsonResponse({'message': 'Post request required.'}, status=403)
 
     body = json.loads(request.body)
+    if int(body['is_subscription']):
+        form_dict = {
+            'choices': int(body['choices']),
+            'name': body['name'],
+            'amount': int(body['amount']),
+            'currency': int(body['currency']),
+            'is_subscription': int(body['is_subscription']),
+            'time_choice': int(body['time_choice']),
+            'start': body['start']
+        }
+    else:
+        form_dict = {
+            'choices': int(body['choices']),
+            'name': body['name'],
+            'amount': int(body['amount']),
+            'currency': int(body['currency']),
+            'is_subscription': None,
+            'time_choice': None,
+            'start': None
+        }
+
+    form = forms.AddExpenseForm(form_dict)
+    if form.is_valid():
+        expense = models.Expense.objects.create(
+            person = request.user,
+            **form.cleaned_data
+        )
+        expense.save()
+        return JsonResponse({'message': 'form valid'}, status=200)
+    else:
+        return JsonResponse({'message': 'form not valid'}, status=400)
+
+
+def add_saving(request):
+    if request.method != 'POST':
+        return JsonResponse({'message': 'Post request required.'}, status=403)
+
+    body = json.loads(request.body)
     form_dict = {
-        'choices': int(body['choices']),
         'name': body['name'],
-        'is_subscription': int(body['is_subscription']),
         'amount': int(body['amount']),
-        'time_choice': int(body['time_choice']),
-        'currency': int(body['choices']),
-        'start': int(body['choices']),
+        'currency': int(body['currency'])
     }
 
+    form = forms.AddSavingForm(form_dict)
+    if form.is_valid():
+        saving = models.Saving.objects.create(
+            person = request.user,
+            **form.cleaned_data
+        )
+        saving.save()
+        return JsonResponse({'message': 'form valid'}, status=200)
+    else:
+        return JsonResponse({'message': 'form not valid'}, status=400)
+
+
+def add_investment(request):
+    if request.method != 'POST':
+        return JsonResponse({'message': 'Post request required.'}, status=403)
+
+    body = json.loads(request.body)
+    form_dict = {
+        'choices': int(body['choices']),
+        'name': body['body'],
+        'amount': int(body['amount']),
+        'currency': int(body['currency']),
+        'return_rate': float(body['return_rate']),
+        'start': body['start'],
+        'end': body['end'],
+        'amount_returned': int(body['amount_returned'])
+    }
+
+    form = forms.AddInvestmentForm(form_dict)
+    if form.is_valid():
+        investment = models.Investment.objects.create(
+            person = request.user,
+            **form.cleaned_data
+        )
+        investment.save()
+        return JsonResponse({'message': 'form valid'}, status=200)
+    else:
+        return JsonResponse({'message': 'form not valid'}, status=400)

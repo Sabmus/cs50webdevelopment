@@ -16,31 +16,7 @@
     <br>
     <form method='post' id='add_expense_form'>
         {% csrf_token %}
-        <div>
-            {{ form.choices.label_tag }}
-            {{ form.choices }}
-        </div>
-        <div>
-            {{ form.name.label_tag }}
-            {{ form.name }}
-        </div>
-        <div>
-            {{ form.amount.label_tag }}
-            {{ form.amount }}
-        </div>
-        <div>
-            {{ form.is_subscription.label_tag }}
-            {{ form.is_subscription }}
-        </div>
-        <div>
-            {{ form.time_choice.label_tag }}
-            {{ form.time_choice }}
-        </div>
-        <div>
-            {{ form.start.label_tag}}
-            {{ form.start }}
-        </div>
-
+        {{ form.as_div }}
         <input type="submit" value="Save">
     </form>
     

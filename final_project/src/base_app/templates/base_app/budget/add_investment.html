@@ -6,15 +6,15 @@
 {% endblock title %}
 
 {% block script %}
-    <script src="{% static 'base_app/js/add_income.js' %}"></script>
+    <script src="{% static 'base_app/js/add_investment.js' %}"></script>
 {% endblock script %}
 
 {% block body %}
-    <h1>Add Income</h1>
+    <h1>Add Investment</h1>
 
     <a href="{% url 'base_app:index' %}">Return</a>
     <br>
-    <form method='post' id='add_income_form'>
+    <form method='post' id='add_investment_form'>
         {% csrf_token %}
         {{ form.as_div }}
         <input type="submit" value="Save">

@@ -13,8 +13,8 @@
         <a href="{% url 'base_app:logout' %}">Log out</a> <br>
         <a href="{% url 'base_app:add_income' %}">Add Income</a> <br>
         <a href="{% url 'base_app:add_expense' %}">Add Expense</a> <br>
-        <a href="{% url 'base_app:add_income' %}">Add Saving</a> <br>
-        <a href="{% url 'base_app:add_income' %}">Add Investment</a> <br>
+        <a href="{% url 'base_app:add_saving' %}">Add Saving</a> <br>
+        <a href="{% url 'base_app:add_investment' %}">Add Investment</a> <br>
     {% else %}
         <a href="{% url 'base_app:login' %}">Log In</a>
         <a href="{% url 'base_app:register' %}">Register</a>
@@ -26,6 +26,27 @@
     {% for income in incomes %}
         <li>{{ income }}</li>
     {% endfor %}
+    </ul>
+
+    <hr>
+    <ul>
+        {% for expense in expenses %}
+            <li>{{ expense }}</li>
+        {% endfor %}
+    </ul>
+
+    <hr>
+    <ul>
+        {% for saving in savings %}
+            <li>{{ saving }}</li>
+        {% endfor %}
+    </ul>
+
+    <hr>
+    <ul>
+        {% for investment in investments %}
+            <li>{{ investment }}</li>
+        {% endfor %}
     </ul>
 
 {% endblock body %}

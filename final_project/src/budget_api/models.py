@@ -4,22 +4,23 @@ from base_app.models import User
 from django.utils.translation import gettext as _
 
 
-class Money(models.Model):
-    class Meta:
-        abstract = True
-    
-    person = models.ForeignKey(User, on_delete=models.CASCADE)
-    amount = models.PositiveIntegerField()
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-
 class Currency(models.Model):
     name = models.CharField(max_length=50)
     currency_code = models.CharField(max_length=3)
 
     def __str__(self):
         return f"{self.name} ({self.currency_code})"
+
+
+class Money(models.Model):
+    class Meta:
+        abstract = True
+    
+    person = models.ForeignKey(User, on_delete=models.CASCADE)
+    amount = models.PositiveIntegerField()
+    currency = models.ForeignKey(Currency, verbose_name=_(f"CLASS currency"), on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
 
 class IncomeChoice(models.Model):
@@ -31,7 +32,6 @@ class IncomeChoice(models.Model):
 
 class Income(Money):
     choices = models.ForeignKey(IncomeChoice, verbose_name=_("Income choices"), on_delete=models.CASCADE)
-    currency = models.ForeignKey(Currency, verbose_name=_("Income currency"), on_delete=models.CASCADE)
 
     def __str__(self):
         return f"{self.choices.name}: ${self.amount} {self.currency.currency_code}"
@@ -61,7 +61,6 @@ class TimeChoice(models.Model):
 
 class Expense(Money):
     choices = models.ForeignKey(ExpenseChoice, verbose_name=_("Expense Choice"), on_delete=models.CASCADE)
-    currency = models.ForeignKey(Currency, verbose_name=_("Expense currency"), on_delete=models.CASCADE)
     name = models.CharField(max_length=50)
     is_subscription = models.BooleanField(default=False)  # means that the amount is charged every month without end
     time_choice = models.ForeignKey(TimeChoice, on_delete=models.CASCADE, null=True, blank=True)

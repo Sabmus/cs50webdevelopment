@@ -10,14 +10,27 @@ from django.contrib.auth.decorators import login_required
 
 from . import models
 from . import forms
+from budget_api import forms as api_forms
 
 
 def index(request):
-    user = models.User.objects.get(username=request.user)
+    try:
+        user = models.User.objects.get(username=request.user)
+    except models.User.DoesNotExist:
+        return render(request, template_name='base_app/index.html', context={
+            'total_income': 0,
+            'incomes': list(),
+            'expenses': list(),
+            'savings': list(),
+            'investments': list()
+        })
 
     return render(request, template_name='base_app/index.html', context={
         'total_income': user.get_incomes(),
-        'incomes': user.income_set.all()
+        'incomes': user.income_set.all(),
+        'expenses': user.expense_set.all(),
+        'savings': user.saving_set.all(),
+        'investments': user.investment_set.all(),
     })
 
 
@@ -99,10 +112,20 @@ def logout_view(request):
 
 def add_income(request):
     return render(request, template_name='base_app/budget/add_income.html', context={
-        'form': forms.AddIncomeForm()
+        'form': api_forms.AddIncomeForm()
     })
 
 def add_expense(request):
     return render(request, template_name='base_app/budget/add_expense.html', context={
-        'form': forms.AddExpenseForm()
+        'form': api_forms.AddExpenseForm()
+    })
+
+def add_saving(request):
+    return render(request, template_name='base_app/budget/add_saving.html', context={
+        'form': api_forms.AddSavingForm()
+    })
+
+def add_investment(request):
+    return render(request, template_name='base_app/budget/add_investment.html', context={
+        'form': api_forms.AddInvestmentForm()
     })

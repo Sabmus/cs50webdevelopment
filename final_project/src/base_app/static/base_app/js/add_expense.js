@@ -1,6 +1,18 @@
 document.addEventListener("DOMContentLoaded", () => {
     
     document.querySelector("#message").innerHTML = "";
+    document.querySelector("#id_time_choice").setAttribute('disabled', "");
+    document.querySelector("#id_start").setAttribute('disabled', "");
+
+    document.querySelector("#id_is_subscription").addEventListener('change', function() {
+        if (this.checked) {
+            document.querySelector("#id_time_choice").removeAttribute('disabled');
+            document.querySelector("#id_start").removeAttribute('disabled');
+        } else {
+            document.querySelector("#id_time_choice").setAttribute('disabled', "");
+            document.querySelector("#id_start").setAttribute('disabled', "");
+        }
+    })
 
     document.querySelector("#add_expense_form").addEventListener('submit', event => {
         event.preventDefault();
@@ -10,7 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
         let formData = {
             choices: document.querySelector("#id_choices").value,
             name: document.querySelector("#id_name").value,
-            is_subscription: document.querySelector("#id_is_subscription").value,
+            is_subscription: document.querySelector("#id_is_subscription").checked,
             amount: document.querySelector("#id_amount").value,
             time_choice: document.querySelector("#id_time_choice").value,
             currency: document.querySelector("#id_currency").value,
