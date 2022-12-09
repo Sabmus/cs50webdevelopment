@@ -115,15 +115,18 @@ def add_income(request):
         'form': api_forms.AddIncomeForm()
     })
 
+
 def add_expense(request):
     return render(request, template_name='base_app/budget/add_expense.html', context={
         'form': api_forms.AddExpenseForm()
     })
 
+
 def add_saving(request):
     return render(request, template_name='base_app/budget/add_saving.html', context={
         'form': api_forms.AddSavingForm()
     })
+
 
 def add_investment(request):
     return render(request, template_name='base_app/budget/add_investment.html', context={

@@ -97,7 +97,7 @@ def add_investment(request):
     body = json.loads(request.body)
     form_dict = {
         'choices': int(body['choices']),
-        'name': body['body'],
+        'name': body['name'],
         'amount': int(body['amount']),
         'currency': int(body['currency']),
         'return_rate': float(body['return_rate']),
