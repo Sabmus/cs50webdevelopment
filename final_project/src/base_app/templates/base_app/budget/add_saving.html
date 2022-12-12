@@ -1,0 +1,24 @@
+{% extends 'base_app/base.html' %}
+{% load static %}
+
+{% block title %}
+    Index
+{% endblock title %}
+
+{% block script %}
+    <script src="{% static 'base_app/js/add_saving.js' %}"></script>
+{% endblock script %}
+
+{% block body %}
+    <h1>Add Saving</h1>
+
+    <a href="{% url 'base_app:index' %}">Return</a>
+    <br>
+    <form method='post' id='add_saving_form'>
+        {% csrf_token %}
+        {{ form.as_div }}
+        <input type="submit" value="Save">
+    </form>
+    
+    <div id="message"></div>
+{% endblock body %}

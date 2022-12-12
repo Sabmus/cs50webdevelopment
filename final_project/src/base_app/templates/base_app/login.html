@@ -1,0 +1,33 @@
+{% extends 'base_app/base.html' %}
+{% load static %}
+
+{% block title %}Log In{% endblock title %}
+
+{% block style %}
+    <link rel="stylesheet" href="{% static 'base_app/css/login.css' %}">
+{% endblock style %}
+
+{% block body %}
+    <div class="main-login">
+        <div class="login-title">
+            <h1>Login Page</h1>
+        </div>
+
+        <div class="login-form">
+            <form action="{% url 'base_app:login' %}" method="POST">
+                <div class="form">
+                    {% csrf_token %}
+                    <input placeholder="username" type="text" name="username" autofocus="" 
+                        autocapitalize="none" autocomplete="username" maxlength="150" required="" id="id_username">
+                    <input type="password" name="password" autocomplete="current-password" 
+                        required="" id="id_password" placeholder="password">
+                    <input type="submit" value="Login">
+                </div>
+            </form>
+        </div>
+        
+        <div class="login-footer">
+            Don't have an account? <a href="{% url 'base_app:register' %}">Register</a>
+        </div>
+    </div>
+{% endblock body %}
